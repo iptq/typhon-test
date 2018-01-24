@@ -27,7 +27,6 @@ class ParseTable(object):
             # for nonterminal in self.grammar.nonterminals:
             #     entry = self.table[i].get(nonterminal, "")
             #     tablerow.append(entry)
-
             for key in rows[0][1:]:
                 tablerow.append(row.get(key, ""))
 
