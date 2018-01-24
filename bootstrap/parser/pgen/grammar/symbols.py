@@ -14,6 +14,8 @@ class GEOF(object):
     @property
     def key(self):
         return "EOF"
+    def __hash__(self):
+        return hash(self.key)
 
 class GEPSILON(object):
     @property

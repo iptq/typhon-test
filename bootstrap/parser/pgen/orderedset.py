@@ -49,6 +49,10 @@ class OrderedSet(object):
         except: pass
         return newset
 
+    def __eq__(self, other):
+        print("comparing", set(self.map.keys()), set(other.map.keys()))
+        return set(self.map.keys()) == set(other.map.keys())
+
     def __contains__(self, item):
         return hash(item) in self.map
 
