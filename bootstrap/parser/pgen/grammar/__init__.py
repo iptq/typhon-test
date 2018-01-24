@@ -3,6 +3,7 @@ from copy import deepcopy
 from functools import reduce
 from operator import xor
 
+from orderedset import OrderedSet
 from .production import Production
 from .symbols import *
 
@@ -44,22 +45,32 @@ def flatten(node, nonterminals):
             return current
     return rec_flatten([node], [])
 
+class Rule(object):
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+
+    @property
+    def pair(self):
+        return self.left, self.right
+    
+
 class Grammar(object):
     def __init__(self, productions, start):
-        assert len(productions.get(start)) == 1
+        keys = list(map(lambda r: r.left, productions))
+        assert start in keys
         
         self._terminals = None
         self._tokens = None
 
-        self.nonterminals = list(productions.keys())
+        self.nonterminals = keys
         self.start = GNT(start)
 
         self.augmented = Production(0, "$accept", [self.start], 0, self)
         self.augmented.augmented = True
         self.productions = [self.augmented]
-        sorted_productions = list(productions.items())
-        sorted_productions.sort(key=lambda p: p[0])
-        for nonterminal, rules in sorted_productions:
+        for rule in productions:
+            nonterminal, rules = rule.pair
             for i, production in enumerate(rules):
                 self.productions.append(Production(i, nonterminal, production, len(self.productions), self))
 
@@ -70,20 +81,24 @@ class Grammar(object):
     def from_file(grammar_file):
         with open(grammar_file, "r") as f:
             data = f.read()
+        return Grammar.from_data(data)
 
-        rules = dict()
+    @staticmethod
+    def from_data(data):
+        rules = OrderedSet()
         productions = ast.parse(data).body
         nonterminals = [production.targets[0].id for production in productions]
 
         for production in productions:
-            rules.update({ production.targets[0].id: flatten(production.value, nonterminals) })
+            rule = Rule(production.targets[0].id, flatten(production.value, nonterminals))
+            rules.add(rule)
 
         return Grammar(rules, productions[0].targets[0].id)
 
     @property
     def terminals(self):
         if not self._terminals:
-            self._terminals = set()
+            self._terminals = OrderedSet()
             for production in self.productions:
                 for symbol in production.right:
                     assert isinstance(symbol, GrammarSymbol)
@@ -94,7 +109,7 @@ class Grammar(object):
     @property
     def tokens(self):
         if not self._tokens:
-            self._tokens = set()
+            self._tokens = OrderedSet()
             for production in self.productions:
                 for symbol in production.right:
                     assert isinstance(symbol, GrammarSymbol)
@@ -113,10 +128,10 @@ class Grammar(object):
 
     def productions_for_symbol(self, symbol):
         if symbol.key not in self._productions_for_symbol:
-            self._productions_for_symbol[symbol.key] = set([p for p in self.productions if p.left == symbol.key])
+            self._productions_for_symbol[symbol.key] = OrderedSet([p for p in self.productions if p.left == symbol.key])
         return self._productions_for_symbol.get(symbol.key)
 
     def productions_with_symbol(self, symbol):
         if symbol.key not in self._productions_with_symbol:
-            self._productions_with_symbol[symbol.key] = set([p for p in self.productions if symbol.key in p.rightkeys])
+            self._productions_with_symbol[symbol.key] = OrderedSet([p for p in self.productions if symbol.key in p.rightkeys])
         return self._productions_with_symbol.get(symbol.key)

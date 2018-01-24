@@ -1,5 +1,6 @@
 from functools import reduce
 from operator import xor
+from orderedset import OrderedSet
 
 class Production(object):
     def __init__(self, ind, left, right, number, grammar):
@@ -10,7 +11,7 @@ class Production(object):
         self.grammar = grammar
         self.augmented = False
 
-        self.rightkeys = set(item.key for item in self.right)
+        self.rightkeys = OrderedSet(item.key for item in self.right)
 
     def __hash__(self):
         return reduce(xor, map(hash, [self.left, *self.right, id(self.grammar)]))

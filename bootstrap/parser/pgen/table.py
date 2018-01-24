@@ -1,11 +1,17 @@
 from grammar.symbols import *
 import colors
+from set_generator import SetGenerator
 
 class ParseTable(object):
     def __init__(self, collection, grammar):
         self.collection = collection
         self.grammar = grammar
         self.action = list(self.grammar.terminals) + [GEOF()]
+
+        print("FIRST SETS")
+        sg = SetGenerator(grammar)
+        for key, value in sg.build_set(sg.first_of).items():
+            print(" ", key, value)
 
         self.table = dict()
         self.build()
@@ -57,9 +63,18 @@ class ParseTable(object):
         print(bot)
 
     def should_reduce(self, item, terminal):
-        return terminal in item.lookahead_set()
+        return terminal in item.lookahead_set
 
     def build(self):
+        def put_action_entry(row, column, entry):
+            previous = row.get(column)
+            if previous == entry: return
+            if previous:
+                parts = previous.split("/")
+                if entry not in parts:
+                    parts.push(entry)
+                entry = "/".join(parts)
+            row[column] = entry
         for state in self.collection.states:
             row = dict()
             conflicts = False
@@ -70,14 +85,15 @@ class ParseTable(object):
                         row["EOF"] = "acc"
                     else:
                         for terminal in self.action:
+                            # print(self.should_reduce(item, terminal), item, terminal)
                             if self.should_reduce(item, terminal):
-                                row[terminal.key] = "r{}".format(production.number)
+                                put_action_entry(row, terminal.key, "r{}".format(production.number))
                 else:
                     transition = item.current_symbol
                     next_state = item.goto
 
                     if self.grammar.is_token(transition):
-                        row[transition.key] = "s{}".format(next_state.number)
+                        put_action_entry(row, transition.key, "s{}".format(next_state.number))
                     else:
                         row[transition.key] = "{}".format(next_state.number)
             self.table[state.number] = row

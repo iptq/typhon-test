@@ -1,4 +1,5 @@
 from copy import deepcopy
+from orderedset import OrderedSet
 from grammar.symbols import *
 
 class SetGenerator(object):
@@ -13,7 +14,8 @@ class SetGenerator(object):
     def first_of(self, symbol):
         if symbol.key in self.first_sets:
             return self.first_sets[symbol.key]
-        firstset = self.first_sets[symbol.key] = set()
+        self.first_sets[symbol.key] = OrderedSet()
+        firstset = OrderedSet()
         if symbol.terminal:
             firstset.add(symbol)
         else:
@@ -24,7 +26,7 @@ class SetGenerator(object):
         return firstset
 
     def first_of_rhs(self, rhs):
-        firstset = set()
+        firstset = OrderedSet()
         EPSILON = GEPSILON()
         for i, symbol in enumerate(rhs):
             if isinstance(symbol, GEPSILON):
@@ -41,12 +43,13 @@ class SetGenerator(object):
     def follow_of(self, symbol):
         if symbol.key in self.follow_sets:
             return self.follow_sets[symbol.key]
-        followset = self.follow_sets[symbol.key] = set()
+        self.follow_sets[symbol.key] = OrderedSet()
+        followset = OrderedSet()
         if symbol == self.grammar.start:
             followset.add(GEOF())
         for production in self.grammar.productions_with_symbol(symbol):
             rhs = deepcopy(production.right)
-            symbols = set(production.right)
+            symbols = OrderedSet(production.right)
             ind = rhs.index(symbol)
             while True:
                 followpart = rhs[ind + 1:]
