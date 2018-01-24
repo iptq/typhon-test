@@ -4,6 +4,10 @@ class TNEWLINE(Token):
     def __repr__(self):
         return "newline"
 
+class TEOF(Token):
+    def __repr__(self):
+        return "eof"
+
 class TSymbol(Token):
     def __init__(self, char):
         self.char = char

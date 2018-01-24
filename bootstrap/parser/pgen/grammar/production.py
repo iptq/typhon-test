@@ -12,6 +12,7 @@ class Production(object):
         self.augmented = False
 
         self.rightkeys = OrderedSet(item.key for item in self.right)
+        self._semantic_action = None
 
     def __hash__(self):
         return reduce(xor, map(hash, [self.left, *self.right, id(self.grammar)]))
@@ -24,3 +25,4 @@ class Production(object):
         else:
             pad = " " * (len(left) + len("->"))
             return "{}| {}".format(pad, right)
+

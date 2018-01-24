@@ -3,11 +3,6 @@ from lexer import Lexer
 
 def parse(source):
     lexer = Lexer(source)
-    print("all tokens:")
-    for token in lexer.all():
-        print(" ", token)
-
-    lexer = Lexer(source)
     return parse_from_tokens(lexer)
 
 if __name__ == "__main__":

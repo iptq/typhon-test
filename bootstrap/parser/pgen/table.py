@@ -8,11 +8,6 @@ class ParseTable(object):
         self.grammar = grammar
         self.action = list(self.grammar.terminals) + [GEOF()]
 
-        print("FIRST SETS")
-        sg = SetGenerator(grammar)
-        for key, value in sg.build_set(sg.first_of).items():
-            print(" ", key, value)
-
         self.table = dict()
         self.build()
         self.print()
@@ -23,19 +18,25 @@ class ParseTable(object):
             [""] + sorted([symbol.key for symbol in self.action]) + sorted(self.grammar.nonterminals)
         ]
         columns = [len(s) for s in rows[0]]
-        for i, row in self.table.items():
+        for i in range(len(self.collection.states)):
+            row = self.table[i]
             tablerow = [" {}".format(i)]
-            for symbol in self.action:
-                entry = self.table[i].get(symbol.key, "")
-                tablerow.append(entry)
-            for nonterminal in self.grammar.nonterminals:
-                entry = self.table[i].get(nonterminal, "")
-                tablerow.append(entry)
+            # for symbol in self.action:
+            #     entry = self.table[i].get(symbol.key, "")
+            #     tablerow.append(entry)
+            # for nonterminal in self.grammar.nonterminals:
+            #     entry = self.table[i].get(nonterminal, "")
+            #     tablerow.append(entry)
+
+            for key in rows[0][1:]:
+                tablerow.append(row.get(key, ""))
+
             assert len(columns) == len(tablerow)
             rows.append(tablerow)
-            for i, col in enumerate(tablerow):
-                if len(col) > columns[i]:
-                    columns[i] = len(col)
+            for j, col in enumerate(tablerow):
+                if len(col) > columns[j]:
+                    columns[j] = len(col)
+        print(rows)
         def get_row(row, first=False, nocolor=False):
             parts = []
             for i, col in enumerate(row):

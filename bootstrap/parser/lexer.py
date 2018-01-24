@@ -8,6 +8,7 @@ class Lexer(object):
         self.position = 0
         self.line = 1
         self.queue = []
+        self._eof = False
 
     def all(self):
         tokens = []
@@ -16,6 +17,13 @@ class Lexer(object):
             tokens.append(t)
             t = self.next()
         return tokens
+
+    @property
+    def eof(self):
+        if not self._eof:
+            self._eof = True
+            return TEOF()
+        return None
 
     def peek(self, offset=0):
         return self.source[self.position + offset]
@@ -61,7 +69,7 @@ class Lexer(object):
         if self.queue:
             return self.queue.pop()
         if self.position >= len(self.source) - 1:
-            return None
+            return self.eof
 
         if self.peek() == "\n":
             self.position += 1
@@ -97,4 +105,4 @@ class Lexer(object):
         if self.queue:
             return self.queue.pop()
         else:
-            return None
+            return self.eof

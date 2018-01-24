@@ -16,7 +16,7 @@ class SetGenerator(object):
             return self.first_sets[symbol.key]
         self.first_sets[symbol.key] = OrderedSet()
         firstset = OrderedSet()
-        if symbol.terminal:
+        if symbol.terminal or isinstance(symbol, GEPSILON) or isinstance(symbol, GEOF):
             firstset.add(symbol)
         else:
             productions = self.grammar.productions_for_symbol(symbol)

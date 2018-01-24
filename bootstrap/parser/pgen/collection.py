@@ -16,10 +16,10 @@ class CanonicalCollection(object):
 
         self.root_item = Item(self.grammar.augmented, 0, self.grammar, self, SetGenerator(grammar), OrderedSet([GEOF()]))
         self.root_item.closure().goto()
-        # self.print()
 
         self.remap()
         self.compress()
+        self.print()
 
     def remap(self):
         self._states = OrderedSet(list(self.intermediate_states) + list(self.final_states))
@@ -53,13 +53,12 @@ class CanonicalCollection(object):
     def unregister(self, state):
         (self.final_states if state.is_final else self.intermediate_states).remove(state)
         try:
-            del self.kernel_sets_transitions[Item.set_key(state.kernel_items)]
+            del self.kernel_sets_transitions[state.kernel_items.key]
             self.lr0sets[state.kernel_items.lr0_key].remove(state)
         except: pass
 
     def compress(self):
         for key, states in self.lr0sets.items():
-            print(key)
             root_state = states[0]
             root_state.merge_items()
             while len(states) > 1:

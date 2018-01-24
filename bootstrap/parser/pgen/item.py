@@ -1,3 +1,4 @@
+from copy import deepcopy
 from grammar.symbols import *
 from orderedset import OrderedSet
 
@@ -89,7 +90,7 @@ class Item(object):
         self._lookahead_set = self.lookahead_set.union(other.lookahead_set)
 
     def calc_lookahead_set(self):
-        previous = self._lookahead_set or OrderedSet()
+        previous = deepcopy(self._lookahead_set) or OrderedSet()
         lookahead_set = None
         follow = self.dot + 1
         rhs = self.production.right
@@ -137,7 +138,7 @@ class Item(object):
             self.state = state.State(ItemSet([self]), self.grammar, self.collection)
 
         productions = self.grammar.productions_for_symbol(self.current_symbol)
-        items = [Item(production, 0, self.grammar, self.collection, self.set_generator, self.calc_lookahead_set()) for production in productions]
+        items = ItemSet([Item(production, 0, self.grammar, self.collection, self.set_generator, self.calc_lookahead_set()) for production in productions])
 
         self.closured = True
         self.state.add(items)

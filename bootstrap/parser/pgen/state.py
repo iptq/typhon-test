@@ -28,6 +28,8 @@ class State(object):
             tags = []
             if item in self.kernel_items:
                 tags.append("kernel")
+            if item.is_final:
+                tags.append("final")
             if item.is_shift:
                 tags.append("shift")
             if item.is_reduce:
@@ -52,8 +54,7 @@ class State(object):
     
     @property
     def key(self):
-        #hack?
-        return id(self)
+        return self.kernel_items.key
 
     def get_transition_info(self, item):
         if item not in self.items:
@@ -65,16 +66,16 @@ class State(object):
     def merge_two_items(self, first, second):
         transition = self.get_transition_info(first) if not first.is_final else None
         if transition:
-            del transition["items"][first.key]
+            transition["items"].remove(first)
         self.items.remove(first)
         first.merge(second)
         self.items.remove(second)
         self.kernel_items.remove(second)
         if transition:
-            del transition["items"][second.key]
+            transition["items"].remove(second)
         self.items.add(first)
         if transition:
-            transition["items"][first.key] = first
+            transition["items"].add(first)
 
     def merge_items(self):
         for key, items in self.lr0map.items():
@@ -107,9 +108,10 @@ class State(object):
     def set_symbol_transition(self, item, state):
         symbol = item.current_symbol
         if symbol not in self.transitions_for_symbol:
-            self.transitions_for_symbol[symbol] = dict(items=OrderedDict(), state=state)
-        if item.key not in self.transitions_for_symbol[symbol]:
-            self.transitions_for_symbol[symbol]["items"][item.key] = item
+            self.transitions_for_symbol[symbol] = dict(items=ItemModule.ItemSet(), state=state)
+
+        if item.key not in self.transitions_for_symbol[symbol]["items"]:
+            self.transitions_for_symbol[symbol]["items"].add(item)
         if state:
             self.transitions_for_symbol[symbol]["state"] = state
             item.connect(state)
@@ -127,8 +129,8 @@ class State(object):
         for symbol in self.transitions_for_symbol:
             if self.transitions_for_symbol[symbol]["state"] is not None:
                 continue
-            items = ItemModule.ItemSet(self.transitions_for_symbol[symbol]["items"].values())
-            outer_state = self.collection.get_transition_for_items(ItemModule.ItemSet(items))
+            items = self.transitions_for_symbol[symbol]["items"]
+            outer_state = self.collection.get_transition_for_items(items)
             if not outer_state:
                 outer_state = State(ItemModule.ItemSet([item.advance() for item in items]), self.grammar, self.collection)
                 self.collection.register_transition(items, outer_state)
