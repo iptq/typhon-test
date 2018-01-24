@@ -39,9 +39,9 @@ class TestLRItem(object):
         assert advance_item.lookahead_set == base_item.lookahead_set
 
     def test_key(self):
-        assert root_item.key == "0|0|EOF"
-        assert base_item.key == "1|0|+,-,EOF"
-        assert advance_item.key == "1|1|+,-,EOF"
+        assert root_item.key == "0|0|$"
+        assert base_item.key == "1|0|+,-,$"
+        assert advance_item.key == "1|1|+,-,$"
 
     def test_lr0_key(self):
         assert root_item.lr0_key == "0|0"
