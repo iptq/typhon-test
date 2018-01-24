@@ -1,0 +1,11 @@
+Start = Program
+
+Program = Stmt
+
+Stmt = SimpleStmt, CompoundStmt
+CompoundStmt = FuncDef
+SimpleStmt = SmallStmt
+SmallStmt = "hello"
+
+FuncDef = "def" + IDENT + "(" + ")" + ":" + Suite
+Suite = SimpleStmt, NEWLINE + INDENT + Stmt + DEDENT

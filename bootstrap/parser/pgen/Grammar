@@ -1,7 +1,0 @@
-Start = Program
-
-Newline = NEWLINE
-Program = Stmt
-Stmt = FuncDef
-FuncDef = "def" + IDENT + "(" + ")" + ":" + Suite
-Suite = "hello"

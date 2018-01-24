@@ -21,7 +21,6 @@ def flatten(node, nonterminals):
                             full.extend(sym1 + sym2)
                             current.append(full)
             elif isinstance(node, ast.Name):
-                obj = None
                 if node.id == "IDENT":
                     obj = GIdent()
                 elif node.id == "NUMBER":
@@ -30,8 +29,14 @@ def flatten(node, nonterminals):
                     obj = GStr()
                 elif node.id == "NEWLINE":
                     obj = GNEWLINE()
+                elif node.id == "INDENT":
+                    obj = GINDENT()
+                elif node.id == "DEDENT":
+                    obj = GDEDENT()
                 elif node.id in nonterminals:
                     obj = GNT(node.id)
+                else:
+                    raise NotImplementedError("{} not implemented".format(node.id))
                 front.append(obj)
                 current.append(deepcopy(front))
             elif isinstance(node, ast.Str):

@@ -9,7 +9,7 @@ from generator import ParserGenerator
 from grammar import Grammar
 
 def pgen():
-    grammar_file = os.path.join(current_dir, "Grammar")
+    grammar_file = os.path.join(os.path.dirname(current_dir), "Grammar")
     output_file = os.path.join(os.path.dirname(current_dir), "parser.py")
 
     grammar = Grammar.from_file(grammar_file)
