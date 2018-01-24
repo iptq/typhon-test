@@ -4,19 +4,11 @@ sys.path.append(os.path.join(os.path.realpath(os.path.dirname(__file__)), "pgen"
 
 import pickle
 from tokens import *
+from grammar.symbols import *
 
 table = pickle.loads(${table})
 productions = pickle.loads(${productions})
-
-def get_column(token):
-    if type(token) is TSymbol:
-        return token.char
-    elif type(token) is TString:
-        return "Str"
-    elif type(token) is TNumber:
-        return "Num"
-    elif type(token) is TEOF:
-        return "EOF"
+tokens = pickle.loads(${tokens})
 
 def parse_from_tokens(lexer):
     stack = [0]
@@ -26,12 +18,9 @@ def parse_from_tokens(lexer):
     while True:
         if token is None:
             raise Exception("unexpected end of input")
-        if type(token) is TNEWLINE:
-            token = lexer.next()
-            continue
         state_n = stack[-1]
-        column = get_column(token)
         state = table.get(state_n)
+        column = token.symbol
         if column not in state:
             print(state.keys())
             raise Exception("unexpected token {} (column = {})".format(token, column))

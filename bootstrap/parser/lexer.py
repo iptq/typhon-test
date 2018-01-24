@@ -63,7 +63,7 @@ class Lexer(object):
             c = self.peek(offset=offset)
             if c not in alpha: break
             self.position += 1
-        self.queue.insert(0, TKeyword(self.source[start:self.position]))
+        self.queue.insert(0, TIdent(self.source[start:self.position]))
 
     def next(self):
         if self.queue:
@@ -74,7 +74,7 @@ class Lexer(object):
         if self.peek() == "\n":
             self.position += 1
             self.line += 1
-            self.queue.insert(0, TNEWLINE()) # not for node!
+            self.queue.insert(0, TNEWLINE())
 
             # read indents
         else:

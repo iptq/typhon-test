@@ -10,7 +10,7 @@ class ParseTable(object):
 
         self.table = dict()
         self.build()
-        # self.print()
+        self.print()
 
     def print(self):
         self.grammar.print()
@@ -81,7 +81,7 @@ class ParseTable(object):
                 production = item.production
                 if item.is_final:
                     if production.augmented:
-                        row["EOF"] = "acc"
+                        row[GEOF().key] = "acc"
                     else:
                         for terminal in self.action:
                             # print(self.should_reduce(item, terminal), item, terminal)

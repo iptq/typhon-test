@@ -28,6 +28,8 @@ def flatten(node, nonterminals):
                     obj = GNum()
                 elif node.id == "STRING":
                     obj = GStr()
+                elif node.id == "NEWLINE":
+                    obj = GNEWLINE()
                 elif node.id in nonterminals:
                     obj = GNT(node.id)
                 front.append(obj)
@@ -116,6 +118,9 @@ class Grammar(object):
                     if not symbol.terminal and symbol.key not in self.nonterminals:
                         self._tokens.add(symbol)
         return self._tokens
+
+    def get_tokens(self):
+        return dict()
 
     def is_token(self, symbol):
         return symbol in self.terminals or symbol in self.tokens

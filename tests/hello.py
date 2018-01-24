@@ -1,1 +1,1 @@
-def main():hello
+def main(): hello

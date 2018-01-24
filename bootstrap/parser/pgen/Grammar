@@ -1,13 +1,7 @@
-Text = Value
+Start = Program
 
-String = STRING
-Number = NUMBER
-
-Null = "null"
-Boolean = "true", "false"
-Object = "{" + "}", "{" + MemberList + "}"
-Member = String + ":" + Value
-MemberList = Member, MemberList + "," + Member
-Array = "[" + "]", "[" + ElementList + "]"
-ElementList = Value, ElementList + "," + Value
-Value = Null, Boolean, String, Number, Object, Array
+Newline = NEWLINE
+Program = Stmt
+Stmt = FuncDef
+FuncDef = "def" + IDENT + "(" + ")" + ":" + Suite
+Suite = "hello"

@@ -1,24 +1,45 @@
-class Token(object): pass
+from grammar.symbols import *
+
+KEYWORDS = ["def", "hello"]
+
+class Token(object):
+    def __repr__(self):
+        return self.symbol.key
+    @property
+    def symbol(self):
+        raise NotImplementedError("fuc", type(self).__name__)
 
 class TNEWLINE(Token):
-    def __repr__(self):
-        return "newline"
+    @property
+    def symbol(self):
+        return GNEWLINE()
 
 class TEOF(Token):
     def __repr__(self):
-        return "eof"
+        return self.symbol.key
+    @property
+    def symbol(self):
+        return GEOF()
 
 class TSymbol(Token):
     def __init__(self, char):
         self.char = char
     def __repr__(self):
         return "sym('{}')".format(self.char)
+    @property
+    def symbol(self):
+        return GLiteral(self.char)
 
-class TKeyword(Token):
+class TIdent(Token):
     def __init__(self, name):
         self.name = name
     def __repr__(self):
-        return "key('{}')".format(self.name)
+        return "id('{}')".format(self.name)
+    @property
+    def symbol(self):
+        if self.name in KEYWORDS:
+            return GLiteral(self.name)
+        return GIdent()
 
 class TString(Token):
     def __init__(self, string):

@@ -22,7 +22,8 @@ class ParserGenerator(object):
             template = Template(f.read())
         output_data = template.substitute(dict(
             table=pickle.dumps(self.table.table),
-            productions=pickle.dumps(self.grammar.productions)
+            tokens=pickle.dumps(self.grammar.get_tokens()),
+            productions=pickle.dumps(self.grammar.productions),
         ))
 
         with open(self.output_file, "w") as f:

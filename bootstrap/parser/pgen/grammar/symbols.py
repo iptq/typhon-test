@@ -10,21 +10,28 @@ class GrammarSymbol(object):
     def __eq__(self, other):
         return hash(self) == hash(other)
 
-class GEOF(object):
+class GEOF(GrammarSymbol):
+    terminal = True
     @property
     def key(self):
-        return "EOF"
-    def __hash__(self):
-        return hash(self.key)
+        return "$"
 
-class GEPSILON(object):
+class GEPSILON(GrammarSymbol):
+    terminal = True
     @property
     def key(self):
-        return "EPSILON"
+        return "e"
+
+class GNEWLINE(GrammarSymbol):
+    terminal = True
+    @property
+    def key(self):
+        return "\\n"
 
 class GIdent(GrammarSymbol):
     terminal = True
-    def __repr__(self):
+    @property
+    def key(self):
         return "Id"
 
 class GStr(GrammarSymbol):
@@ -45,7 +52,7 @@ class GLiteral(GrammarSymbol):
         self.string = string
     @property
     def key(self):
-        return self.string
+        return "L{}".format(repr(self.string))
 
 class GNT(GrammarSymbol):
     terminal = False
