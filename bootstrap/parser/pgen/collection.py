@@ -1,19 +1,22 @@
 from item import Item
 from set_generator import SetGenerator
+from orderedset import OrderedSet
 from grammar.symbols import *
+
+class StateCollection(OrderedSet): pass
 
 class CanonicalCollection(object):
     def __init__(self, grammar):
         self.grammar = grammar
-        self.intermediate_states = dict()
-        self.final_states = dict()
+        self.intermediate_states = StateCollection()
+        self.final_states = StateCollection()
         self.kernel_sets_transitions = dict()
 
         self.root_item = Item(self.grammar.augmented, 0, self.grammar, self, SetGenerator(grammar), set([GEOF()]))
         self.root_item.closure().goto()
 
     def remap(self):
-        states = list(self.intermediate_states.values()) + list(self.final_states.values())
+        states = list(self.intermediate_states) + list(self.final_states)
         for i, state in enumerate(states):
             state.number = i
         return states
@@ -29,5 +32,5 @@ class CanonicalCollection(object):
         self.kernel_sets_transitions[Item.set_key(items)] = state
 
     def register(self, state):
-        (self.final_states if state.is_final else self.intermediate_states)[state.key] = state
+        (self.final_states if state.is_final else self.intermediate_states).add(state)
         self.remap()
