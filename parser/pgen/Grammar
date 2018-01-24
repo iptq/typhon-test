@@ -1,0 +1,12 @@
+JSONText = Value
+
+String = STRING
+Null = "null"
+Number = "1", "2", "3", "4", "5", "6", "7", "8", "9"
+Boolean = "true", "false"
+Object = "{" + "}", "{" + MemberList + "}"
+Member = String, Value
+MemberList = Member, MemberList + "," + Member
+Array = "[" + "]", "[" + ElementList + "]"
+ElementList = Value, ElementList + "," + Value
+Value = Null, Boolean, String, Number, Object, Array
