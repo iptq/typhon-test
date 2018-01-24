@@ -43,14 +43,18 @@ def flatten(node, nonterminals):
 class Grammar(object):
     def __init__(self, productions, start):
         assert len(productions.get(start)) == 1
-        self.nonterminals = productions.keys()
-        self.augmented = Production(0, "$accept", [start], 0, self)
+        self.nonterminals = list(productions.keys())
+        self.augmented = Production(0, "$accept", [GNT(start)], 0, self)
         self.augmented.augmented = True
         self.productions = [self.augmented]
         for nonterminal, rules in productions.items():
             for i, production in enumerate(rules):
                 self.productions.append(Production(i, nonterminal, production, len(self.productions), self))
 
+        print("Grammar Productions:")
+        for production in self.productions:
+            print(repr(production))
+        print("---")
         self.productions_for_symbol = dict()
 
     @staticmethod
@@ -68,6 +72,6 @@ class Grammar(object):
         return Grammar(rules, productions[0].targets[0].id)
 
     def get_productions_for_symbol(self, symbol):
-        if symbol not in self.productions_for_symbol:
-            self.productions_for_symbol[symbol] = [p for p in self.productions if p.left == symbol]
-        return self.productions_for_symbol[symbol]
+        if symbol.key not in self.productions_for_symbol:
+            self.productions_for_symbol[symbol.key] = set([p for p in self.productions if p.left == symbol.key])
+        return self.productions_for_symbol.get(symbol.key)

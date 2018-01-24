@@ -1,3 +1,33 @@
+class ItemSet(object):
+    def __init__(self):
+        self.elements = []
+        self.map = dict()
+
+    def add(self, item):
+        if item.key in self.map:
+            return
+        self.map[item.key] = len(self.elements)
+        self.elements.append(item)
+
+    def __contains__(self, item):
+        return item.key in self.map
+
+    def __len__(self):
+        return len(self.elements)
+
+    def __getitem__(self, key):
+        if type(key) is int:
+            return self.elements[key]
+        elif type(key) is str:
+            return self.elements[self.map[key]]
+
+    def __iter__(self):
+        for item in self.elements:
+            yield item
+
+    def __repr__(self):
+        return "[{}]".format(", ".join([repr(item) for item in self.elements]))
+
 from state import State
 
 class Item(object):
@@ -13,11 +43,14 @@ class Item(object):
 
     def __repr__(self):
         items = []
-        for i, item in enumerate(self.production.right):
-            if i == self.dot:
-                items.append(".")
+        for item in self.production.right:
             items.append(repr(item))
+        items.insert(self.dot, ".")
         return "{} -> {}".format(self.production.left, " ".join(items))
+
+    @staticmethod
+    def set_key(items):
+        return "|".join(item.key for item in set(items))
 
     @property
     def key(self):
@@ -31,17 +64,27 @@ class Item(object):
     def is_final(self):
         return self.dot == len(self.right)
 
+    @property
+    def goto(self):
+        if not self.outer_state:
+            self.state.goto()
+        return self.outer_state
+      
+
+    def connect(self, state):
+        self.outer_state = state
+
     def should_closure(self):
         return (not self.closured and
             not self.is_final and
-            self.current_symbol in self.grammar.nonterminals)
+            self.current_symbol.key in self.grammar.nonterminals)
 
     def closure(self):
         if not self.should_closure():
             return
 
         if not self.state:
-            self.state = State(self.grammar, self.collection)
+            self.state = State([self], self.grammar, self.collection)
 
         productions = self.grammar.get_productions_for_symbol(self.current_symbol)
         items = [Item(production, 0, self.grammar, self.collection) for production in productions]
@@ -49,3 +92,6 @@ class Item(object):
         self.closured = True
         self.state.add(items)
         return self.state
+
+    def advance(self):
+        return Item(self.production, self.dot + 1, self.grammar, self.collection)

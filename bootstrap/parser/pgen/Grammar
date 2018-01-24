@@ -2,7 +2,7 @@ JSONText = Value
 
 String = STRING
 Null = "null"
-Number = "1", "2", "3", "4", "5", "6", "7", "8", "9"
+Number = "1"
 Boolean = "true", "false"
 Object = "{" + "}", "{" + MemberList + "}"
 Member = String, Value

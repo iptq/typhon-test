@@ -1,23 +1,29 @@
 class GrammarSymbol(object):
     # base class
-    pass
+    @property
+    def key(self):
+        return self
+    
 
-class GIdent(object):
+class GIdent(GrammarSymbol):
     def __repr__(self):
         return "Id"
 
-class GStr(object):
+class GStr(GrammarSymbol):
     def __repr__(self):
         return "Str"
 
-class GLiteral(object):
+class GLiteral(GrammarSymbol):
     def __init__(self, string):
         self.string = string
     def __repr__(self):
         return "{}".format(repr(self.string))
 
-class GNT(object):
+class GNT(GrammarSymbol):
     def __init__(self, name):
         self.name = name
     def __repr__(self):
         return "NT({})".format(self.name)
+    @property
+    def key(self):
+        return self.name

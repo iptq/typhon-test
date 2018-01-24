@@ -1,3 +1,6 @@
+from functools import reduce
+from operator import xor
+
 class Production(object):
     def __init__(self, ind, left, right, number, grammar):
         self.ind = ind
@@ -6,6 +9,9 @@ class Production(object):
         self.number = number
         self.grammar = grammar
         self.augmented = False
+
+    def __hash__(self):
+        return reduce(xor, map(hash, [self.left, *self.right, id(self.grammar)]))
 
     def __repr__(self):
         left = self.left
