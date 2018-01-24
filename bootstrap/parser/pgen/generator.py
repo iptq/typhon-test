@@ -20,6 +20,7 @@ class ParserGenerator(object):
     def generate(self):
         with open(self.template_file, "r") as f:
             template = Template(f.read())
+
         output_data = template.substitute(dict(
             table=pickle.dumps(self.table.table),
             tokens=pickle.dumps(self.grammar.get_tokens()),

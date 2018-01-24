@@ -1,56 +1,11 @@
 import ast
-from copy import deepcopy
 from functools import reduce
 from operator import xor
 
 from orderedset import OrderedSet
+from .util import flatten
 from .production import Production
 from .symbols import *
-
-def flatten(node, nonterminals):
-    def rec_flatten(items, front):
-        current = []
-        for node in items:
-            if isinstance(node, ast.BinOp):
-                if isinstance(node.op, ast.Add):
-                    left = rec_flatten([node.left], deepcopy(front))
-                    right = rec_flatten([node.right], deepcopy(front))
-                    for sym1 in left:
-                        for sym2 in right:
-                            full = deepcopy(front)
-                            full.extend(sym1 + sym2)
-                            current.append(full)
-            elif isinstance(node, ast.Name):
-                if node.id == "IDENT":
-                    obj = GIdent()
-                elif node.id == "NUMBER":
-                    obj = GNum()
-                elif node.id == "STRING":
-                    obj = GStr()
-                elif node.id == "NEWLINE":
-                    obj = GNEWLINE()
-                elif node.id == "INDENT":
-                    obj = GINDENT()
-                elif node.id == "DEDENT":
-                    obj = GDEDENT()
-                elif node.id in nonterminals:
-                    obj = GNT(node.id)
-                else:
-                    raise NotImplementedError("{} not implemented".format(node.id))
-                front.append(obj)
-                current.append(deepcopy(front))
-            elif isinstance(node, ast.Str):
-                front.append(GLiteral(node.s))
-                current.append(deepcopy(front))
-            elif isinstance(node, ast.Tuple):
-                for element in node.elts:
-                    flat = rec_flatten([element], deepcopy(front))
-                    for sym in flat:
-                        current.append(sym)
-            else:
-                raise NotImplementedError(type(node))
-            return current
-    return rec_flatten([node], [])
 
 class Rule(object):
     def __init__(self, left, right):
@@ -60,7 +15,6 @@ class Rule(object):
     @property
     def pair(self):
         return self.left, self.right
-    
 
 class Grammar(object):
     def __init__(self, productions, start):
@@ -79,7 +33,9 @@ class Grammar(object):
         for rule in productions:
             nonterminal, rules = rule.pair
             for i, production in enumerate(rules):
-                self.productions.append(Production(i, nonterminal, production, len(self.productions), self))
+                obj = Production(i, nonterminal, production, len(self.productions), self)
+                print(obj)
+                self.productions.append(obj)
 
         self._productions_for_symbol = dict()
         self._productions_with_symbol = dict()

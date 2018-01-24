@@ -9,7 +9,7 @@ def compile(source):
     print(parse(source))
     print("+ parsed source")
 
-    # step 2: basic semantic analysis
+    # step 2: build expressions
     # ???
 
     # step 3: ???

@@ -1,4 +1,2 @@
 def main():
-    def shiet():
-        def lol():
-            hello
+    puts("Hello, world!")
