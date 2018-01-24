@@ -1,1 +1,4 @@
-def main(): hello
+def main():
+    def shiet():
+        def lol():
+            hello

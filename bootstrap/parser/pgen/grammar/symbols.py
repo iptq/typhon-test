@@ -28,6 +28,18 @@ class GNEWLINE(GrammarSymbol):
     def key(self):
         return "\\n"
 
+class GDEDENT(GrammarSymbol):
+    terminal = True
+    @property
+    def key(self):
+        return "<--"
+
+class GINDENT(GrammarSymbol):
+    terminal = True
+    @property
+    def key(self):
+        return "-->"
+
 class GIdent(GrammarSymbol):
     terminal = True
     @property

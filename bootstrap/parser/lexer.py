@@ -8,6 +8,7 @@ class Lexer(object):
         self.position = 0
         self.line = 1
         self.queue = []
+        self.indents = []
         self._eof = False
 
     def all(self):
@@ -21,6 +22,9 @@ class Lexer(object):
     @property
     def eof(self):
         if not self._eof:
+            while self.indents:
+                self.indents.pop()
+                return TDEDENT()
             self._eof = True
             return TEOF()
         return None
@@ -28,11 +32,44 @@ class Lexer(object):
     def peek(self, offset=0):
         return self.source[self.position + offset]
 
+    def peek_while(self, f):
+        offset = 0
+        c = self.peek(offset)
+        while f(c) and self.position + offset < len(self.source):
+            offset += 1
+            c = self.peek(offset)
+        return self.source[self.position:self.position + offset]
+
     def skip_whitespace(self):
         c = self.peek()
         while c in " \t":
             self.position += 1
             c = self.peek()
+
+    def read_indents(self):
+        curr_indent = self.peek_while(lambda c: c in " \t")
+        curr_stack_len = 0
+        dedented = False
+        for ind, indent in enumerate(self.indents):
+            substr = curr_indent[curr_stack_len:curr_stack_len + len(indent)]
+            if substr == indent:
+                curr_stack_len += len(indent)
+            else:
+                dedented = True
+                break
+        if dedented:
+            if curr_stack_len != len(curr_indent):
+                raise Exception("ur indenting is fuckd", self.line)
+            for _ in range(ind, len(self.indents)):
+                self.queue.insert(0, TDEDENT())
+            self.indents = self.indents[ind:]
+        else:
+            remain = curr_indent[curr_stack_len:]
+            if len(remain) > 0:
+                self.indents.append(remain)
+                self.queue.insert(0, TINDENT())
+        self.position += len(curr_indent)
+        # print("indent:", repr(curr_indent))
 
     def read_string(self, quote):
         self.position += len(quote)
@@ -75,8 +112,7 @@ class Lexer(object):
             self.position += 1
             self.line += 1
             self.queue.insert(0, TNEWLINE())
-
-            # read indents
+            self.read_indents()
         else:
             self.skip_whitespace()
 

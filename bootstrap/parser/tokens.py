@@ -14,6 +14,16 @@ class TNEWLINE(Token):
     def symbol(self):
         return GNEWLINE()
 
+class TINDENT(Token):
+    @property
+    def symbol(self):
+        return GINDENT()
+
+class TDEDENT(Token):
+    @property
+    def symbol(self):
+        return GDEDENT()
+
 class TEOF(Token):
     def __repr__(self):
         return self.symbol.key
