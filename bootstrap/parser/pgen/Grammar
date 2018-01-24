@@ -1,11 +1,12 @@
 JSONText = Value
 
 String = STRING
+Number = NUMBER
+
 Null = "null"
-Number = "1"
 Boolean = "true", "false"
 Object = "{" + "}", "{" + MemberList + "}"
-Member = String, Value
+Member = String + ":" + Value
 MemberList = Member, MemberList + "," + Member
 Array = "[" + "]", "[" + ElementList + "]"
 ElementList = Value, ElementList + "," + Value

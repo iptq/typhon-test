@@ -10,10 +10,6 @@ class CanonicalCollection(object):
         self.root_item = Item(self.grammar.augmented, 0, self.grammar, self)
         self.root_item.closure().goto()
 
-        print("States:")
-        for state in self.states:
-            print(repr(state))
-
     def remap(self):
         states = list(self.intermediate_states.values()) + list(self.final_states.values())
         for i, state in enumerate(states):
