@@ -128,7 +128,7 @@ class Grammar(object):
     def print(self):
         print("Grammar:")
         for production in self.productions:
-            print(production.number, repr(production))
+            print("{}: {}".format(str(production.number).rjust(3), repr(production)))
         print("---")
 
     def productions_for_symbol(self, symbol):

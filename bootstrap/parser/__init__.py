@@ -1,17 +1,11 @@
-from parser import parse_from_tokens
-from lexer import Lexer
+import sys
+import os
+current_dir = os.path.realpath(os.path.dirname(__file__))
+sys.path.append(current_dir)
 
 def parse(source):
-    lexer = Lexer(source)
-    for token in lexer.all():
-        print(token)
+    from .parser import parse_from_tokens
+    from .lexer import Lexer
 
     lexer = Lexer(source)
     return parse_from_tokens(lexer)
-
-if __name__ == "__main__":
-    import sys
-    filename = sys.argv[1]
-    with open(filename, "r") as f:
-        source = f.read()
-    print(parse(source))

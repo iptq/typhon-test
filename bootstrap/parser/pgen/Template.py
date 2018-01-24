@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.join(os.path.realpath(os.path.dirname(__file__)), "pgen"))
 
 import pickle
-from tokens import *
+from .tokens import *
 from grammar.symbols import *
 
 table = pickle.loads(${table})
