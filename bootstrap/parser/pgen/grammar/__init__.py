@@ -101,6 +101,9 @@ class Grammar(object):
                     if not symbol.terminal and symbol.key not in self.nonterminals:
                         self._tokens.add(symbol)
         return self._tokens
+
+    def is_token(self, symbol):
+        return symbol in self.terminals or symbol in self.tokens
     
     def print(self):
         print("Grammar:")

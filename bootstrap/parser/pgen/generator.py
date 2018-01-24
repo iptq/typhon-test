@@ -12,7 +12,7 @@ class ParserGenerator(object):
         print("Follow Set")
         for key, value in generator.build_set(generator.follow_of).items():
             print(" ", key, list(map(lambda x: x.key, value)))
-
+            
         self.table = ParseTable(CanonicalCollection(grammar), grammar)
 
     def generate(self):

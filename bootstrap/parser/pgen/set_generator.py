@@ -45,7 +45,27 @@ class SetGenerator(object):
         if symbol == self.grammar.start:
             followset.add(GEOF())
         for production in self.grammar.productions_with_symbol(symbol):
-            right = deepcopy(production.right)
+            rhs = deepcopy(production.right)
             symbols = set(production.right)
+            ind = rhs.index(symbol)
+            while True:
+                followpart = rhs[ind + 1:]
+                if len(followpart) > 0:
+                    while len(followpart) > 0:
+                        sym = followpart[0]
+                        first_of_follow = self.first_of(sym)
+                        followset = followset.union(filter(lambda s: s != GEPSILON(), first_of_follow))
+                        if GEPSILON() not in first_of_follow:
+                            break
+                        followpart = followpart[1:]
+                if len(followpart) == 0:
+                    lhs = GNT(production.left)
+                    if lhs != symbol:
+                        followset = followset.union(self.follow_of(lhs))
+                rhs = followpart
+                try:
+                    ind = rhs.index(symbol)
+                except:
+                    break
         self.follow_sets[symbol.key] = followset
         return followset

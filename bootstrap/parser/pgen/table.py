@@ -72,4 +72,12 @@ class ParseTable(object):
                         for terminal in self.action:
                             if self.should_reduce(item, terminal):
                                 row[terminal.key] = "r{}".format(production.number)
+                else:
+                    transition = item.current_symbol
+                    next_state = item.goto
+
+                    if self.grammar.is_token(transition):
+                        row[transition.key] = "s{}".format(next_state.number)
+                    else:
+                        row[transition.key] = "{}".format(next_state.number)
             self.table[state.number] = row
