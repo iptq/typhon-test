@@ -29,7 +29,6 @@ def parse_from_tokens(lexer):
         if type(token) is TNEWLINE:
             token = lexer.next()
             continue
-        print(token)
         state_n = stack[-1]
         column = get_column(token)
         state = table.get(state_n)

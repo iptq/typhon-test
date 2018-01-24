@@ -19,7 +19,7 @@ class CanonicalCollection(object):
 
         self.remap()
         self.compress()
-        self.print()
+        # self.print()
 
     def remap(self):
         self._states = OrderedSet(list(self.intermediate_states) + list(self.final_states))

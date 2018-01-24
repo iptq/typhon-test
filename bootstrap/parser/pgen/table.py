@@ -10,7 +10,7 @@ class ParseTable(object):
 
         self.table = dict()
         self.build()
-        self.print()
+        # self.print()
 
     def print(self):
         self.grammar.print()
@@ -35,7 +35,6 @@ class ParseTable(object):
             for j, col in enumerate(tablerow):
                 if len(col) > columns[j]:
                     columns[j] = len(col)
-        print(rows)
         def get_row(row, first=False, nocolor=False):
             parts = []
             for i, col in enumerate(row):
