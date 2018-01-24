@@ -12,6 +12,7 @@ class ParseTable(object):
         self.print()
 
     def print(self):
+        self.grammar.print()
         rows = [
             [""] + sorted([symbol.key for symbol in self.action]) + sorted(self.grammar.nonterminals)
         ]
@@ -55,12 +56,20 @@ class ParseTable(object):
         print("\n{}\n".format(sep).join(parts))
         print(bot)
 
+    def should_reduce(self, item, terminal):
+        return terminal in item.lookahead_set()
+
     def build(self):
         for state in self.collection.states:
             row = dict()
             conflicts = False
             for item in state.items:
+                production = item.production
                 if item.is_final:
-                    if item.production.augmented:
+                    if production.augmented:
                         row["EOF"] = "acc"
+                    else:
+                        for terminal in self.action:
+                            if self.should_reduce(item, terminal):
+                                row[terminal.key] = "r{}".format(production.number)
             self.table[state.number] = row

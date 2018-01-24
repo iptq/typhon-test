@@ -10,6 +10,8 @@ class Production(object):
         self.grammar = grammar
         self.augmented = False
 
+        self.rightkeys = set(item.key for item in self.right)
+
     def __hash__(self):
         return reduce(xor, map(hash, [self.left, *self.right, id(self.grammar)]))
 

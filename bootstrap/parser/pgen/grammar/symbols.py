@@ -15,6 +15,11 @@ class GEOF(object):
     def key(self):
         return "EOF"
 
+class GEPSILON(object):
+    @property
+    def key(self):
+        return "EPSILON"
+
 class GIdent(GrammarSymbol):
     terminal = True
     def __repr__(self):

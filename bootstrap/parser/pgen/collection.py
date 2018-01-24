@@ -1,4 +1,6 @@
 from item import Item
+from set_generator import SetGenerator
+from grammar.symbols import *
 
 class CanonicalCollection(object):
     def __init__(self, grammar):
@@ -7,7 +9,7 @@ class CanonicalCollection(object):
         self.final_states = dict()
         self.kernel_sets_transitions = dict()
 
-        self.root_item = Item(self.grammar.augmented, 0, self.grammar, self)
+        self.root_item = Item(self.grammar.augmented, 0, self.grammar, self, SetGenerator(grammar), set([GEOF()]))
         self.root_item.closure().goto()
 
     def remap(self):

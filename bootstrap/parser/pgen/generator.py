@@ -1,4 +1,5 @@
 from collection import CanonicalCollection
+from set_generator import SetGenerator
 from table import ParseTable
 
 class ParserGenerator(object):
@@ -6,6 +7,11 @@ class ParserGenerator(object):
         self.grammar = grammar
         self.output_file = output_file
         self.output_data = ""
+
+        generator = SetGenerator(self.grammar)
+        print("Follow Set")
+        for key, value in generator.build_set(generator.follow_of).items():
+            print(" ", key, list(map(lambda x: x.key, value)))
 
         self.table = ParseTable(CanonicalCollection(grammar), grammar)
 

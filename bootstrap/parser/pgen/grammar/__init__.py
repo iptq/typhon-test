@@ -1,5 +1,7 @@
 import ast
 from copy import deepcopy
+from functools import reduce
+from operator import xor
 
 from .production import Production
 from .symbols import *
@@ -50,19 +52,19 @@ class Grammar(object):
         self._tokens = None
 
         self.nonterminals = list(productions.keys())
+        self.start = GNT(start)
 
-        self.augmented = Production(0, "$accept", [GNT(start)], 0, self)
+        self.augmented = Production(0, "$accept", [self.start], 0, self)
         self.augmented.augmented = True
         self.productions = [self.augmented]
-        for nonterminal, rules in productions.items():
+        sorted_productions = list(productions.items())
+        sorted_productions.sort(key=lambda p: p[0])
+        for nonterminal, rules in sorted_productions:
             for i, production in enumerate(rules):
                 self.productions.append(Production(i, nonterminal, production, len(self.productions), self))
 
-        # print("Grammar Productions:")
-        # for production in self.productions:
-        #     print(repr(production))
-        # print("---")
-        self.productions_for_symbol = dict()
+        self._productions_for_symbol = dict()
+        self._productions_with_symbol = dict()
 
     @staticmethod
     def from_file(grammar_file):
@@ -99,9 +101,19 @@ class Grammar(object):
                     if not symbol.terminal and symbol.key not in self.nonterminals:
                         self._tokens.add(symbol)
         return self._tokens
-        
+    
+    def print(self):
+        print("Grammar:")
+        for production in self.productions:
+            print(production.number, repr(production))
+        print("---")
 
-    def get_productions_for_symbol(self, symbol):
-        if symbol.key not in self.productions_for_symbol:
-            self.productions_for_symbol[symbol.key] = set([p for p in self.productions if p.left == symbol.key])
-        return self.productions_for_symbol.get(symbol.key)
+    def productions_for_symbol(self, symbol):
+        if symbol.key not in self._productions_for_symbol:
+            self._productions_for_symbol[symbol.key] = set([p for p in self.productions if p.left == symbol.key])
+        return self._productions_for_symbol.get(symbol.key)
+
+    def productions_with_symbol(self, symbol):
+        if symbol.key not in self._productions_with_symbol:
+            self._productions_with_symbol[symbol.key] = set([p for p in self.productions if symbol.key in p.rightkeys])
+        return self._productions_with_symbol.get(symbol.key)
