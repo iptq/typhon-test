@@ -1,24 +1,11 @@
 #!/usr/bin/python
-# i put this here so my text editor reads it as python
 
-# syntax:
-#  a = b is basic production
-#  a = b + c is concatenation
-#  a = b, c is alternation
-#  a = {b} is optional
-#  a = [b] is the same as EMPTY, {b}
+Newline = Newline_
+Newline_ = Newline_ + NEWLINE, EMPTY
 
-Start = Program
+Grammar = Newline + Grammar_
+Grammar_ = Grammar_ + Rule + Newline, EMPTY
 
-Program = Stmt
-
-Stmt = SimpleStmt, CompoundStmt
-CompoundStmt = FuncDef
-SimpleStmt = SmallStmt
-SmallStmt = "hello"
-
-Arguments = [Expression]
-FuncDef = "def" + IDENT + "(" + ")" + ":" + Suite
-FuncCall = IDENT + "(" + (Arguments) + ")"
-
-Suite = SimpleStmt, NEWLINE + INDENT + Stmt + DEDENT
+Rule = LHS + ":" + RHS
+LHS = IDENT
+RHS = IDENT, STRING 

@@ -1,6 +1,7 @@
 from tokens import *
 
-alpha = "abcdefghijklmnopqrstuvwxyz"
+alpha = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+digits = "012346789"
 
 class Lexer(object):
     def __init__(self, source):
@@ -89,16 +90,16 @@ class Lexer(object):
         offset = 0
         while self.position + offset < len(self.source):
             c = self.peek(offset=offset)
-            if c not in "0123456789": break # decimals
+            if c not in digits: break # decimals
             self.position += 1
         self.queue.insert(0, TNumber(self.source[start:self.position]))
 
-    def read_keyword(self):
+    def read_ident(self):
         start = self.position
         offset = 0
         while self.position + offset < len(self.source):
             c = self.peek(offset=offset)
-            if c not in alpha: break
+            if c not in (alpha + digits + "_"): break
             self.position += 1
         self.queue.insert(0, TIdent(self.source[start:self.position]))
 
@@ -119,10 +120,10 @@ class Lexer(object):
         c1 = self.peek()
         if c1 == '"' or c1 == "'":
             self.read_string(c1)
-        elif c1 in "012346789":
+        elif c1 in digits:
             self.read_number()
-        elif c1 in alpha:
-            self.read_keyword()
+        elif c1 in alpha + "_":
+            self.read_ident()
         else:
             found = False
             if self.position < len(self.source) - 1:
@@ -140,5 +141,5 @@ class Lexer(object):
         
         if self.queue:
             return self.queue.pop()
-        else:
+        elif self.position >= len(self.source) - 1:
             return self.eof
