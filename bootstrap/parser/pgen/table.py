@@ -1,9 +1,18 @@
 from grammar.symbols import *
-import colors
 from set_generator import SetGenerator
+
+_verbose = False
+colors = None
+def color(*args, **kwargs):
+    if not _verbose: return
+    if colors is None:
+        import colors
+    colors.color(*args, **kwargs)
 
 class ParseTable(object):
     def __init__(self, collection, grammar, verbose=False):
+        global _verbose
+        _verbose = verbose
         self.collection = collection
         self.grammar = grammar
         self.action = list(self.grammar.terminals) + [GEOF()]
@@ -42,17 +51,17 @@ class ParseTable(object):
             for i, col in enumerate(row):
                 entry = col.rjust(columns[i], " ")
                 if not nocolor and (i == 0 or first):
-                    entry = colors.color(entry, fg_blue=True, bold=True)
+                    entry = color(entry, fg_blue=True, bold=True)
                 if col == "acc":
-                    entry = colors.color(entry, fg_green=True)
+                    entry = color(entry, fg_green=True)
                 parts.append(entry)
-            rowstr = " {} ".format(colors.color("│", fg_dark_grey=True)).join(parts)
-            border = colors.color("│", fg_dark_grey=True)
+            rowstr = " {} ".format(color("│", fg_dark_grey=True)).join(parts)
+            border = color("│", fg_dark_grey=True)
             return "{}{} {}".format(border, rowstr, border)
         parts = []
-        top = colors.color("┌{}─┐".format("─┬─".join(["─" * col for col in columns])), fg_dark_grey=True)
-        sep = colors.color("├{}─┤".format("─┼─".join(["─" * col for col in columns])), fg_dark_grey=True)
-        bot = colors.color("└{}─┘".format("─┴─".join(["─" * col for col in columns])), fg_dark_grey=True)
+        top = color("┌{}─┐".format("─┬─".join(["─" * col for col in columns])), fg_dark_grey=True)
+        sep = color("├{}─┤".format("─┼─".join(["─" * col for col in columns])), fg_dark_grey=True)
+        bot = color("└{}─┘".format("─┴─".join(["─" * col for col in columns])), fg_dark_grey=True)
         for i, row in enumerate(rows):
             if i == 0:
                 firstrow = get_row(row, first=True)
@@ -102,23 +111,27 @@ class ParseTable(object):
 
     def resolve_conflicts(self, state, row):
         for symbol, entry in row.items():
-            if "/" not in entry: continue
-            self.init_symbol_conflict_data(state, symbol, entry)
-            choices = set(map(lambda f: f[0], entry.split("/")))
-            if choices == set(["s", "r"]):
+            choices = sorted(entry.split("/"))
+            if len(choices) < 2: continue
+            self.init_symbol_conflict_data(state, symbol, choices)
+            if list(map(lambda f: f[0], choices)) == ["r", "s"]:
                 self.resolve_sr_conflict(state, row, symbol)
-            elif choices == set(["r", "r"]):
+            elif list(map(lambda f: f[0], choices)) == ["r", "r"]:
                 self.resolve_rr_conflict(state, row, symbol)
 
     def init_symbol_conflict_data(self, state, symbol, conflict):
-        entry = dict(map(lambda f: (f[0], f), conflict.split("/")))
-        self.state_conflict_data[state, symbol] = {"entry": entry, "resolved": False}
+        self.state_conflict_data[state, symbol] = conflict
 
     def resolve_sr_conflict(self, state, row, symbol):
         entry = row[symbol]
         # don't really have operator precedence impleneted yet so just shift LO
-        row[symbol] = self.state_conflict_data[state, symbol]["entry"]["s"]
-        self.state_conflict_data[state, symbol]["resolved"] = True
+        row[symbol] = self.state_conflict_data[state, symbol][1]
+        del self.state_conflict_data[state, symbol]
 
     def resolve_rr_conflict(self, state, row, symbol):
-        return
+        entry = self.state_conflict_data[state, symbol]
+        numbers = list(map(lambda f: int(f[1:]), entry))
+        numbers.sort()
+        # pick the smaller one LO
+        row[symbol] = "r{}".format(numbers[0])
+        del self.state_conflict_data[state, symbol]

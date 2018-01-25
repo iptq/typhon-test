@@ -1,7 +1,6 @@
 import ast
 from copy import deepcopy
-
-from .symbols import *
+from symbols import *
 
 def flatten(node, nonterminals):
     def rec_flatten(items, front):

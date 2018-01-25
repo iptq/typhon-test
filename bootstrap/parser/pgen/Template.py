@@ -43,10 +43,11 @@ def parse_from_tokens(lexer, verbose=False):
                 args.append(stack_entry)
                 rhs_length -= 1
             reduce_stack_entry = type(production.left, (), dict(args=args))()
-            next_state = stack[-1]
-            symbol_to_reduce_with = production.left
             stack.append(reduce_stack_entry)
-            stack.append(int(table[next_state][symbol_to_reduce_with]))
+            next_state = stack[-1]
+            symbol = production.left
+            print(next_state, symbol)
+            stack.append(int(table[next_state].get(symbol)))
         elif entry == "acc":
             stack.pop()
             parsed = stack.pop()

@@ -50,6 +50,7 @@ class Lexer(object):
     def read_comments(self):
         comment = self.peek_while(lambda c: c != "\n")
         self.position += len(comment) + 1
+        return comment
 
     def read_indents(self):
         curr_indent = self.peek_while(lambda c: c in " \t")
@@ -124,6 +125,7 @@ class Lexer(object):
         c1 = self.peek()
         if c1 == "#":
             self.read_comments()
+            return self.next()
         elif c1 == '"' or c1 == "'":
             self.read_string(c1)
         elif c1 in digits:
@@ -140,7 +142,7 @@ class Lexer(object):
                     self.queue.insert(0, TSymbol(double))
                     self.position += 2
             if not found:
-                if c1 in "{}[]()=:;.,+-*/":
+                if c1 in "\\|/{}[]()=:;.,+-*%$#@!^&":
                     found = True
                     self.queue.insert(0, TSymbol(c1))
                     self.position += 1
@@ -149,3 +151,5 @@ class Lexer(object):
             return self.queue.pop()
         elif self.position >= len(self.source) - 1:
             return self.eof
+        print(self.position, len(self.source), repr(self.source[self.position:]))
+        return self.next()

@@ -94,9 +94,36 @@ B = 'b', EMPTY
             data = """
 S = A + B + C
 A = 'a'
+B = EMPTY
+C = EMPTY
+""".strip()
+            sg = SetGenerator(Grammar.from_data(data))
+            assert sg.follow_of(GNT('S')) == OrderedSet([GEOF()])
+            assert sg.follow_of(GNT('A')) == OrderedSet([GEOF()])
+
+        def test_rhs_captured_and_eliminated(self):
+            data = """
+S = A + B + C
+A = 'a'
 B = 'b', EMPTY
 C = 'c', EMPTY
 """.strip()
             sg = SetGenerator(Grammar.from_data(data))
             assert sg.follow_of(GNT('S')) == OrderedSet([GEOF()])
             assert sg.follow_of(GNT('A')) == OrderedSet([GLiteral('b'), GLiteral('c'), GEOF()])
+
+        def test_all_follow_sets(self):
+            data = """
+S = A + B + C
+A = 'a'
+B = 'b', EMPTY
+C = 'c', EMPTY
+""".strip()
+            sg = SetGenerator(Grammar.from_data(data))
+            assert sg.get_follow_sets() == dict([
+                ("$accept", OrderedSet([])),
+                ("S", OrderedSet([GEOF()])),
+                ("A", OrderedSet([GLiteral('b'), GLiteral('c'), GEOF()])),
+                ("B", OrderedSet([GLiteral('c'), GEOF()])),
+                ("C", OrderedSet([GEOF()])),
+            ])

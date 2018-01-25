@@ -2,12 +2,8 @@
 # https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form
 
 Grammar = Rule
-
-Newline = NEWLINE
-
 Rule = Rule_
-Rule_ = Rule_ + Rule__, Rule__
-Rule__ = LHS + ":" + RHS + Newline
+Rule_ = EMPTY, LHS + ":" + RHS + NEWLINE + Rule_
 
 LHS = IDENT
 RHS = IDENT, STRING, \

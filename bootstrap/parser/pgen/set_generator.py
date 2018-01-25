@@ -79,3 +79,6 @@ class SetGenerator(object):
                 except:
                     break
         return followset
+
+    def get_follow_sets(self):
+        return self.build_set(self.follow_of)

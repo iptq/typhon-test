@@ -1,2 +1,9 @@
-Start: Start
+#!/usr/bin/python
 
+Basic: Example
+
+Using: "Literal"
+
+Alternation: This | That
+
+Comma: This, That
