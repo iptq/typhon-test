@@ -2,4 +2,4 @@
 PYTHON=python3
 COMPILER=bootstrap
 
-$PYTHON $COMPILER/__main__.py $@
+$PYTHON -B $COMPILER/__main__.py $@

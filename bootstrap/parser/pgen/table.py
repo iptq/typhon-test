@@ -9,6 +9,7 @@ class ParseTable(object):
         self.action = list(self.grammar.terminals) + [GEOF()]
 
         self.table = dict()
+        self.state_conflict_data = dict()
         self.build()
         if verbose:
             self.print()
@@ -96,4 +97,28 @@ class ParseTable(object):
                         put_action_entry(row, transition.key, "s{}".format(next_state.number))
                     else:
                         row[transition.key] = "{}".format(next_state.number)
+            self.resolve_conflicts(state, row)
             self.table[state.number] = row
+
+    def resolve_conflicts(self, state, row):
+        for symbol, entry in row.items():
+            if "/" not in entry: continue
+            self.init_symbol_conflict_data(state, symbol, entry)
+            choices = set(map(lambda f: f[0], entry.split("/")))
+            if choices == set(["s", "r"]):
+                self.resolve_sr_conflict(state, row, symbol)
+            elif choices == set(["r", "r"]):
+                self.resolve_rr_conflict(state, row, symbol)
+
+    def init_symbol_conflict_data(self, state, symbol, conflict):
+        entry = dict(map(lambda f: (f[0], f), conflict.split("/")))
+        self.state_conflict_data[state, symbol] = {"entry": entry, "resolved": False}
+
+    def resolve_sr_conflict(self, state, row, symbol):
+        entry = row[symbol]
+        # don't really have operator precedence impleneted yet so just shift LO
+        row[symbol] = self.state_conflict_data[state, symbol]["entry"]["s"]
+        self.state_conflict_data[state, symbol]["resolved"] = True
+
+    def resolve_rr_conflict(self, state, row, symbol):
+        return
