@@ -47,6 +47,10 @@ class Lexer(object):
             self.position += 1
             c = self.peek()
 
+    def read_comments(self):
+        comment = self.peek_while(lambda c: c != "\n")
+        self.position += len(comment) + 1
+
     def read_indents(self):
         curr_indent = self.peek_while(lambda c: c in " \t")
         curr_stack_len = 0
@@ -118,7 +122,9 @@ class Lexer(object):
             self.skip_whitespace()
 
         c1 = self.peek()
-        if c1 == '"' or c1 == "'":
+        if c1 == "#":
+            self.read_comments()
+        elif c1 == '"' or c1 == "'":
             self.read_string(c1)
         elif c1 in digits:
             self.read_number()

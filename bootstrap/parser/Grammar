@@ -1,11 +1,19 @@
 #!/usr/bin/python
+# https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form
+
+Grammar = Rule
 
 Newline = Newline_
 Newline_ = Newline_ + NEWLINE, EMPTY
 
-Grammar = Newline + Grammar_
-Grammar_ = Grammar_ + Rule + Newline, EMPTY
+Rule = Rule_
+Rule_ = Rule_ + Rule__, Rule__
+Rule__ = LHS + ":" + RHS + Newline
 
-Rule = LHS + ":" + RHS
 LHS = IDENT
-RHS = IDENT, STRING 
+RHS = IDENT, STRING, \
+    "[" + RHS + "]", \
+    "{" + RHS + "}", \
+    "(" + RHS + ")", \
+    RHS + "|" + RHS, \
+    RHS + "," + RHS

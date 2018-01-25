@@ -39,7 +39,7 @@ class ParseTable(object):
         def get_row(row, first=False, nocolor=False):
             parts = []
             for i, col in enumerate(row):
-                entry = col.ljust(columns[i], " ")
+                entry = col.rjust(columns[i], " ")
                 if not nocolor and (i == 0 or first):
                     entry = colors.color(entry, fg_blue=True, bold=True)
                 if col == "acc":

@@ -31,6 +31,8 @@ def flatten(node, nonterminals):
                     obj = GStr()
                 elif node.id == "EMPTY":
                     obj = GEPSILON()
+                elif node.id == "EOF":
+                    obj = GEOF()
                 elif node.id == "NEWLINE":
                     obj = GNEWLINE()
                 elif node.id == "INDENT":

@@ -14,4 +14,4 @@ def parse(source, verbose=False):
             print(token)
 
     lexer = Lexer(source)
-    return parse_from_tokens(lexer, verbose=False)
+    return parse_from_tokens(lexer, verbose=verbose)

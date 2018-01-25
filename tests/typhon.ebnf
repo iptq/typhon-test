@@ -1,4 +1,5 @@
-
 Start: Program
+Program: "hello", "world"
 
-Program: "hello"
+Test: { ABC }
+ABC: "A" | "B" | "C"

@@ -23,9 +23,11 @@ def parse_from_tokens(lexer, verbose=False):
         column = token.symbol
         if column not in state:
             print(state.keys())
-            raise Exception("unexpected token {} (column = {})".format(token, column))
+            raise Exception("unexpected token from state {}: {} (column = {})".format(state_n, token, column))
         
         entry = state[column]
+        if "/" in entry:
+            raise Exception("unresolved conflict")
         if entry[0] == "s":
             stack.append(token)
             stack.append(int(entry[1:]))
@@ -49,4 +51,5 @@ def parse_from_tokens(lexer, verbose=False):
             stack.pop()
             parsed = stack.pop()
             return parsed
-        if verbose: print(stack)
+        if verbose:
+            print([x if type(x) is int else type(x).__name__ for x in stack])

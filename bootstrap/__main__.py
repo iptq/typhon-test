@@ -1,3 +1,5 @@
+# the version of the compiler written in Real python
+
 def compile(source):
     # step 0: generate parser
     from parser.pgen import pgen
