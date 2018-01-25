@@ -1,20 +1,22 @@
 # the version of the compiler written in Real python
 
+import colors
+
 def compile(source):
     # step 0: generate parser
     from parser.pgen import pgen
     pgen(verbose=True)
-    print("+ generated praser")
+    print(colors.color("+ generated praser", fg_green=True))
 
     # step 1: parse tokens
     from parser import parse
     syntree = parse(source, verbose=True)
-    print("+ parsed source")
+    print(colors.color("+ parsed source", fg_green=True))
 
     # step 2: build data model
     from datamodel import build
     print(build(syntree))
-    print("+ built a data model")
+    print(colors.color("+ built a data model", fg_green=True))
 
     # step 3: ???
 

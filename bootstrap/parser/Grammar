@@ -3,8 +3,7 @@
 
 Grammar = Rule
 
-Newline = Newline_
-Newline_ = Newline_ + NEWLINE, EMPTY
+Newline = NEWLINE
 
 Rule = Rule_
 Rule_ = Rule_ + Rule__, Rule__

@@ -1,5 +1,2 @@
-Start: Program
-Program: "hello", "world"
+Start: Start
 
-Test: { ABC }
-ABC: "A" | "B" | "C"
