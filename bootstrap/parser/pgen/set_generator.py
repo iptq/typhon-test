@@ -55,6 +55,7 @@ class SetGenerator(object):
         if symbol == self.grammar.start:
             followset.add(GEOF())
         for production in self.grammar.productions_with_symbol(symbol):
+            print("searching", production)
             rhs = deepcopy(production.right)
             symbols = OrderedSet(production.right)
             ind = rhs.index(symbol)

@@ -98,5 +98,5 @@ class Grammar(object):
 
     def productions_with_symbol(self, symbol):
         if symbol.key not in self._productions_with_symbol:
-            self._productions_with_symbol[symbol.key] = OrderedSet([p for p in self.productions if symbol.key in p.rightkeys])
+            self._productions_with_symbol[symbol.key] = OrderedSet([p for p in self.productions if symbol in p.right_set])
         return self._productions_with_symbol.get(symbol.key)

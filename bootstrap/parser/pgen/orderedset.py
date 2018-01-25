@@ -28,7 +28,7 @@ class OrderedSet(object):
         if not(type(other) in [list, set] or isinstance(other, OrderedSet)): return
         newset = deepcopy(self)
         for item in other:
-            if item in exclude:
+            if item in excludes:
                 continue
             newset.add(item)
         return newset
@@ -37,7 +37,7 @@ class OrderedSet(object):
         excludes = OrderedSet(exclude)
         if not(type(other) in [list, set] or isinstance(other, OrderedSet)): return
         for item in other:
-            if item in exclude:
+            if item in excludes:
                 continue
             self.add(item)
         return self
