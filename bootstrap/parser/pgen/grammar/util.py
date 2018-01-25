@@ -56,3 +56,6 @@ def flatten(node, nonterminals):
                 raise NotImplementedError(type(node))
             return current
     return rec_flatten([node], [])
+
+def repeat():
+    return
