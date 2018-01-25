@@ -56,6 +56,9 @@ class TString(Token):
         self.string = string
     def __repr__(self):
         return "str({})".format(repr(self.string))
+    @property
+    def symbol(self):
+        return GStr()
 
 class TNumber(Token):
     def __init__(self, number):

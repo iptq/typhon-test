@@ -17,7 +17,7 @@ class Rule(object):
         return self.left, self.right
 
 class Grammar(object):
-    def __init__(self, productions, start):
+    def __init__(self, productions, start, verbose=False):
         keys = list(map(lambda r: r.left, productions))
         assert start in keys
         
@@ -34,20 +34,19 @@ class Grammar(object):
             nonterminal, rules = rule.pair
             for i, production in enumerate(rules):
                 obj = Production(i, nonterminal, production, len(self.productions), self)
-                print(obj)
                 self.productions.append(obj)
 
         self._productions_for_symbol = dict()
         self._productions_with_symbol = dict()
 
     @staticmethod
-    def from_file(grammar_file):
+    def from_file(grammar_file, verbose=False):
         with open(grammar_file, "r") as f:
             data = f.read()
-        return Grammar.from_data(data)
+        return Grammar.from_data(data, verbose=verbose)
 
     @staticmethod
-    def from_data(data):
+    def from_data(data, verbose=False):
         rules = OrderedSet()
         productions = ast.parse(data).body
         nonterminals = [production.targets[0].id for production in productions]
@@ -56,7 +55,7 @@ class Grammar(object):
             rule = Rule(production.targets[0].id, flatten(production.value, nonterminals))
             rules.add(rule)
 
-        return Grammar(rules, productions[0].targets[0].id)
+        return Grammar(rules, productions[0].targets[0].id, verbose=verbose)
 
     @property
     def terminals(self):

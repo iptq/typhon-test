@@ -10,7 +10,7 @@ table = pickle.loads(${table})
 productions = pickle.loads(${productions})
 tokens = pickle.loads(${tokens})
 
-def parse_from_tokens(lexer):
+def parse_from_tokens(lexer, verbose=False):
     stack = [0]
     token = lexer.next()
 
@@ -40,7 +40,7 @@ def parse_from_tokens(lexer):
                 stack_entry = stack.pop()
                 args.append(stack_entry)
                 rhs_length -= 1
-            reduce_stack_entry = type(production.left, (), dict(args=args))
+            reduce_stack_entry = type(production.left, (), dict(args=args))()
             next_state = stack[-1]
             symbol_to_reduce_with = production.left
             stack.append(reduce_stack_entry)
@@ -49,4 +49,4 @@ def parse_from_tokens(lexer):
             stack.pop()
             parsed = stack.pop()
             return parsed
-        print(stack)
+        if verbose: print(stack)

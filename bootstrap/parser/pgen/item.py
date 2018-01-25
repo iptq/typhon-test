@@ -101,7 +101,7 @@ class Item(object):
         EPSILON = GEPSILON()
         if lookahead_set:
             epsilon = EPSILON in lookahead_set
-            if epsilon: del lookahead_set[EPSILON]
+            if epsilon: lookahead_set.remove(EPSILON)
         else:
             lookahead_set = OrderedSet()
 

@@ -1,16 +1,18 @@
 def compile(source):
     # step 0: generate parser
     from parser.pgen import pgen
-    pgen()
+    pgen(verbose=True)
     print("+ generated praser")
 
     # step 1: parse tokens
     from parser import parse
-    print(parse(source))
+    syntree = parse(source, verbose=True)
     print("+ parsed source")
 
-    # step 2: build expressions
-    # ???
+    # step 2: build data model
+    from datamodel import build
+    print(build(syntree))
+    print("+ built a data model")
 
     # step 3: ???
 

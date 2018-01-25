@@ -12,13 +12,20 @@ Start = Program
 
 Program = Stmt
 
-Stmt = SimpleStmt, CompoundStmt
+Indent = INDENT
+Dedent = DEDENT
+Newline = Newline_
+Newline_ = Newline_ + NEWLINE, EMPTY
+
+Stmt = Stmt_
+Stmt_ = Stmt_ + (SimpleStmt, CompoundStmt), EMPTY
+
 CompoundStmt = FuncDef
 SimpleStmt = SmallStmt
-SmallStmt = "hello"
+SmallStmt = "hello", FuncCall
 
-Arguments = [Expression]
 FuncDef = "def" + IDENT + "(" + ")" + ":" + Suite
-FuncCall = IDENT + "(" + (Arguments) + ")"
+FuncCall = IDENT + "(" + STRING + ")"
 
-Suite = SimpleStmt, NEWLINE + INDENT + Stmt + DEDENT
+
+Suite = SimpleStmt, Newline + Indent + Stmt + Dedent

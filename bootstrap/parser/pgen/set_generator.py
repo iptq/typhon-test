@@ -14,27 +14,27 @@ class SetGenerator(object):
     def first_of(self, symbol):
         if symbol.key in self.first_sets:
             return self.first_sets[symbol.key]
-        self.first_sets[symbol.key] = OrderedSet()
-        firstset = OrderedSet()
-        if symbol.terminal or isinstance(symbol, GEPSILON) or isinstance(symbol, GEOF):
+        firstset = self.first_sets[symbol.key] = OrderedSet()
+        if symbol.terminal or symbol.is_epsilon or isinstance(symbol, GEOF):
             firstset.add(symbol)
+            return self.first_sets[symbol.key]
         else:
             productions = self.grammar.productions_for_symbol(symbol)
             for production in productions:
-                firstset = firstset.union(self.first_of_rhs(production.right))
-        self.first_sets[symbol.key] = firstset
+                first_of_rhs = self.first_of_rhs(production.right)
+                firstset.merge(first_of_rhs)
         return firstset
 
     def first_of_rhs(self, rhs):
         firstset = OrderedSet()
         EPSILON = GEPSILON()
         for i, symbol in enumerate(rhs):
-            if isinstance(symbol, GEPSILON):
+            if symbol.is_epsilon:
                 firstset.add(EPSILON)
                 break
-            firstcurrent = self.first_of(symbol)
-            firstset = firstset.union(firstcurrent)
-            if EPSILON not in firstcurrent:
+            first_of_current = self.first_of(symbol)
+            firstset.merge(first_of_current, exclude=[EPSILON])
+            if EPSILON not in first_of_current:
                 break
             elif i == len(rhs) - 1:
                 firstset.add(EPSILON)

@@ -3,14 +3,15 @@ import colors
 from set_generator import SetGenerator
 
 class ParseTable(object):
-    def __init__(self, collection, grammar):
+    def __init__(self, collection, grammar, verbose=False):
         self.collection = collection
         self.grammar = grammar
         self.action = list(self.grammar.terminals) + [GEOF()]
 
         self.table = dict()
         self.build()
-        self.print()
+        if verbose:
+            self.print()
 
     def print(self):
         self.grammar.print()
@@ -71,7 +72,7 @@ class ParseTable(object):
             if previous:
                 parts = previous.split("/")
                 if entry not in parts:
-                    parts.push(entry)
+                    parts.append(entry)
                 entry = "/".join(parts)
             row[column] = entry
         for state in self.collection.states:

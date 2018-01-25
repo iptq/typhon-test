@@ -40,8 +40,8 @@ class TestLRItem(object):
 
     def test_key(self):
         assert root_item.key == "0|0|$"
-        assert base_item.key == "1|0|$,L'+',L'-'"
-        assert advance_item.key == "1|1|$,L'+',L'-'"
+        assert base_item.key == "1|0|$,'+','-'"
+        assert advance_item.key == "1|1|$,'+','-'"
 
     def test_lr0_key(self):
         assert root_item.lr0_key == "0|0"

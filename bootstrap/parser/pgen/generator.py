@@ -7,7 +7,7 @@ from set_generator import SetGenerator
 from table import ParseTable
 
 class ParserGenerator(object):
-    def __init__(self, grammar, output_file, template_file=None):
+    def __init__(self, grammar, output_file, template_file=None, verbose=False):
         self.grammar = grammar
         self.output_file = output_file
         self.template_file = template_file
@@ -15,9 +15,9 @@ class ParserGenerator(object):
         if not self.template_file:
             self.template_file = os.path.join(os.path.realpath(os.path.dirname(__file__)), "Template.py")
 
-        self.table = ParseTable(CanonicalCollection(grammar), grammar)
+        self.table = ParseTable(CanonicalCollection(grammar), grammar, verbose=verbose)
 
-    def generate(self):
+    def generate(self, verbose=False):
         with open(self.template_file, "r") as f:
             template = Template(f.read())
 

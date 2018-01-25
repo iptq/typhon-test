@@ -23,12 +23,24 @@ class OrderedSet(object):
         del self.map[hash(el)]
         return el
 
-    def union(self, other):
+    def union(self, other, exclude=[]):
+        excludes = OrderedSet(exclude)
         if not(type(other) in [list, set] or isinstance(other, OrderedSet)): return
         newset = deepcopy(self)
         for item in other:
+            if item in exclude:
+                continue
             newset.add(item)
         return newset
+
+    def merge(self, other, exclude=[]):
+        excludes = OrderedSet(exclude)
+        if not(type(other) in [list, set] or isinstance(other, OrderedSet)): return
+        for item in other:
+            if item in exclude:
+                continue
+            self.add(item)
+        return self
 
     def remove(self, item):
         h = hash(item)

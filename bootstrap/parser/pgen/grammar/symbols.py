@@ -1,5 +1,7 @@
 class GrammarSymbol(object):
-    # base class    
+    # base class   
+    terminal = True
+    is_epsilon = False
     @property
     def key(self):
         return self
@@ -11,60 +13,52 @@ class GrammarSymbol(object):
         return hash(self) == hash(other)
 
 class GEOF(GrammarSymbol):
-    terminal = True
     @property
     def key(self):
         return "$"
 
 class GEPSILON(GrammarSymbol):
-    terminal = True
+    is_epsilon = True
     @property
     def key(self):
         return "e"
 
 class GNEWLINE(GrammarSymbol):
-    terminal = True
     @property
     def key(self):
         return "\\n"
 
 class GDEDENT(GrammarSymbol):
-    terminal = True
     @property
     def key(self):
         return "<--"
 
 class GINDENT(GrammarSymbol):
-    terminal = True
     @property
     def key(self):
         return "-->"
 
 class GIdent(GrammarSymbol):
-    terminal = True
     @property
     def key(self):
         return "Id"
 
 class GStr(GrammarSymbol):
-    terminal = True
     @property
     def key(self):
         return "Str"
 
 class GNum(GrammarSymbol):
-    terminal = True
     @property
     def key(self):
         return "Num"
 
 class GLiteral(GrammarSymbol):
-    terminal = True
     def __init__(self, string):
         self.string = string
     @property
     def key(self):
-        return "L{}".format(repr(self.string))
+        return repr(self.string)
 
 class GNT(GrammarSymbol):
     terminal = False
