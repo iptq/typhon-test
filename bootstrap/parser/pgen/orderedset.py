@@ -62,7 +62,6 @@ class OrderedSet(object):
         return newset
 
     def __eq__(self, other):
-        print("comparing", set(self.map.keys()), set(other.map.keys()))
         return set(self.map.keys()) == set(other.map.keys())
 
     def __contains__(self, item):
