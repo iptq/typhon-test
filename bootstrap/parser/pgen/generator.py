@@ -7,9 +7,8 @@ from set_generator import SetGenerator
 from table import ParseTable
 
 class ParserGenerator(object):
-    def __init__(self, grammar, output, verbose=False):
+    def __init__(self, grammar, verbose=False):
         self.grammar = grammar
-        self.output = output
         self.table = ParseTable(CanonicalCollection(grammar), grammar, verbose=verbose)
 
     def generate(self, verbose=False):

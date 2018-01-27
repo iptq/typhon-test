@@ -5,6 +5,8 @@ import os
 current_dir = os.path.realpath(os.path.dirname(__file__))
 sys.path.append(current_dir)
 
+from string import Template
+
 from generator import ParserGenerator
 from grammar import Grammar
 
@@ -18,7 +20,7 @@ def pgen(verbose=False):
 
     parser_data = generator.generate(verbose=verbose)
 
-    with open(self.template_file, "r") as f:
+    with open(template_file, "r") as f:
         template = Template(f.read())
 
     data = template.substitute(parser_data)

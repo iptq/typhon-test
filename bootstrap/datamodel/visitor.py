@@ -1,7 +1,7 @@
 from .symboltable import SymbolTable
 
 class Visitor(object):
-    def __init__(self, syntree):
+    def __init__(self, syntree, symbols=None):
         self.root = syntree
         self.table = SymbolTable()
 

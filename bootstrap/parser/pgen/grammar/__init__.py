@@ -63,6 +63,7 @@ class Grammar(object):
             self._terminals = OrderedSet()
             for production in self.productions:
                 for symbol in production.right:
+                    print(symbol, type(symbol), GrammarSymbol)
                     assert isinstance(symbol, GrammarSymbol)
                     if symbol.terminal:
                         self._terminals.add(symbol)

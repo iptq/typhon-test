@@ -1,6 +1,10 @@
+import os
+import sys
+sys.path.append(os.path.realpath(os.path.dirname(os.path.dirname(__file__))))
+
 import ast
 from copy import deepcopy
-from symbols import *
+from grammar.symbols import *
 
 def flatten(node, nonterminals):
     def rec_flatten(items, front):

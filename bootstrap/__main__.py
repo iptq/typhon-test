@@ -13,10 +13,10 @@ def compile(source):
     syntree = parse(source, verbose=True)
     print(colors.color("+ parsed source", fg_green=True))
 
-    # step 2: build data model
+    # step 2: build symbol table
     from datamodel import build
     print(build(syntree))
-    print(colors.color("+ built a data model", fg_green=True))
+    print(colors.color("+ built a symbol table", fg_green=True))
 
     # step 3: ???
 

@@ -4,10 +4,11 @@ from set_generator import SetGenerator
 _verbose = False
 colors = None
 def color(*args, **kwargs):
+    global colors
     if not _verbose: return
     if colors is None:
         import colors
-    colors.color(*args, **kwargs)
+    return colors.color(*args, **kwargs)
 
 class ParseTable(object):
     def __init__(self, collection, grammar, verbose=False):
