@@ -2,6 +2,8 @@ class GrammarSymbol(object):
     # base class   
     terminal = True
     is_epsilon = False
+    def __init__(self):
+        self.children = []
     @property
     def key(self):
         return self
@@ -64,6 +66,7 @@ class GLiteral(GrammarSymbol):
 class GNT(GrammarSymbol):
     terminal = False
     def __init__(self, name):
+        self.children = []
         self.name = name
     @property
     def key(self):

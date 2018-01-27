@@ -35,7 +35,7 @@ class TSymbol(Token):
     def __init__(self, char):
         self.char = char
     def __repr__(self):
-        return "sym('{}')".format(self.char)
+        return "'{}'".format(self.char)
     @property
     def symbol(self):
         return GLiteral(self.char)
@@ -44,7 +44,7 @@ class TIdent(Token):
     def __init__(self, name):
         self.name = name
     def __repr__(self):
-        return "id('{}')".format(self.name)
+        return "'{}'".format(self.name)
     @property
     def symbol(self):
         if self.name in KEYWORDS:
@@ -55,7 +55,7 @@ class TString(Token):
     def __init__(self, string):
         self.string = string
     def __repr__(self):
-        return "str({})".format(repr(self.string))
+        return "{}".format(repr(self.string))
     @property
     def symbol(self):
         return GStr()

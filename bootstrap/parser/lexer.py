@@ -5,7 +5,10 @@ digits = "012346789"
 
 class Lexer(object):
     def __init__(self, source):
-        self.source = source
+        self.source = source + " "
+        self.reset()
+
+    def reset(self):
         self.position = 0
         self.line = 1
         self.queue = []
@@ -18,6 +21,8 @@ class Lexer(object):
         while t is not None:
             tokens.append(t)
             t = self.next()
+
+        self.reset()
         return tokens
 
     @property
@@ -151,5 +156,4 @@ class Lexer(object):
             return self.queue.pop()
         elif self.position >= len(self.source) - 1:
             return self.eof
-        print(self.position, len(self.source), repr(self.source[self.position:]))
         return self.next()

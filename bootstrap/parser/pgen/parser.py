@@ -1,5 +1,6 @@
 from grammar.symbols import *
 from string import Template
+from copy import deepcopy
 import pickle
 
 class Parser(object):
@@ -34,43 +35,44 @@ class Parser(object):
             state = self.table.get(state_n)
             column = token.symbol
             if column not in state:
-                print(state.keys())
                 raise Exception("unexpected token from state {}: {} (column = {})".format(state_n, token, column))
             
             entry = state[column]
-            if verbose:
-                print([x if type(x) is int else type(x).__name__ for x in stack])
             if "/" in entry:
                 raise Exception("unresolved conflict")
             if entry[0] == "s":
-                stack.append(token)
+                stack.append(token.symbol)
                 stack.append(int(entry[1:]))
                 shifted_token = token
                 token = lexer.next()
             elif entry[0] == "r":
                 production = self.productions[int(entry[1:])]
                 rhs_length = len(production.right)
-                if state_n == 0 and len(production.right) == 1 and isinstance(production.right[0], GEPSILON):
+                if len(production.right) == 1 and isinstance(production.right[0], GEPSILON):
                     #special case
-                    stack.append(production.left)
-                    stack.append(int(self.table[0].get(production.left)))
-                    print(stack)
+                    next_state = stack[-1]
+                    symbol = production.left
+                    # stack.append(token.symbol)
+                    stack.append(GEPSILON())
+                    stack.append(int(self.table[next_state].get(symbol)))
                 else:
                     args = []
                     while rhs_length > 0:
                         stack.pop()
                         stack_entry = stack.pop()
-                        args.append(stack_entry)
+                        if not isinstance(stack_entry, GEPSILON):
+                            args.insert(0, stack_entry)
                         rhs_length -= 1
-                    reduce_stack_entry = type(production.left, (), dict(args=args))()
-                    stack.append(reduce_stack_entry)
+                    # reduce_stack_entry = type(repr(production.left), (), dict(args=args))()
+                    reduce_stack_entry = deepcopy(production.left)
+                    reduce_stack_entry.children = args
                     next_state = stack[-1]
+                    stack.append(reduce_stack_entry)
                     symbol = production.left
-                    print(next_state, symbol)
                     stack.append(int(self.table[next_state].get(symbol)))
             elif entry == "acc":
                 stack.pop()
                 parsed = stack.pop()
                 return parsed
             if verbose:
-                print([x if type(x) is int else type(x).__name__ for x in stack])
+                print("(1)", [x if type(x) is int else (type(x).__name__, repr(x)) for x in stack])
