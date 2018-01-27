@@ -13,6 +13,10 @@ class GrammarSymbol(object):
         return self.key
     def __eq__(self, other):
         return hash(self) == hash(other)
+    def print(self, depth=0):
+        print("  " * depth + "{} ({})".format(type(self).__name__, repr(self)))
+        for child in self.children:
+            child.print(depth + 1)
 
 class GEOF(GrammarSymbol):
     @property
@@ -58,6 +62,7 @@ class GNum(GrammarSymbol):
 
 class GLiteral(GrammarSymbol):
     def __init__(self, string):
+        self.children = []
         self.string = string
     @property
     def key(self):
