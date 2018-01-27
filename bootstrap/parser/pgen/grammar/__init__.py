@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.realpath(os.path.dirname(__file__)))
+
 import ast
 from functools import reduce
 from operator import xor
@@ -5,7 +9,7 @@ from operator import xor
 from orderedset import OrderedSet
 from .util import flatten
 from .production import Production
-from .symbols import *
+from grammar.symbols import *
 
 class Rule(object):
     def __init__(self, left, right):

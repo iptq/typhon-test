@@ -6,6 +6,7 @@ current_dir = os.path.realpath(os.path.dirname(__file__))
 sys.path.append(current_dir)
 
 from string import Template
+import pickle
 
 from generator import ParserGenerator
 from grammar import Grammar
@@ -19,11 +20,11 @@ def pgen(verbose=False):
     generator = ParserGenerator(grammar, verbose=verbose)
 
     parser_data = generator.generate(verbose=verbose)
-
     with open(template_file, "r") as f:
         template = Template(f.read())
 
-    data = template.substitute(parser_data)
+    pickled_parser_data = dict(map(lambda v: (v[0], pickle.dumps(v[1])), parser_data.items()))
+    data = template.substitute(pickled_parser_data)
     with open(output_file, "w") as f:
         f.write(data)
         f.close()

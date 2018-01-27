@@ -1,6 +1,5 @@
 import os
 from string import Template
-import pickle
 
 from collection import CanonicalCollection
 from set_generator import SetGenerator
@@ -13,7 +12,7 @@ class ParserGenerator(object):
 
     def generate(self, verbose=False):
         return dict(
-            table=pickle.dumps(self.table.table),
-            tokens=pickle.dumps(self.grammar.get_tokens()),
-            productions=pickle.dumps(self.grammar.productions),
+            table=self.table.table,
+            tokens=self.grammar.get_tokens(),
+            productions=self.grammar.productions,
         )
