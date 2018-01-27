@@ -41,7 +41,7 @@ class Lexer(object):
     def peek_while(self, f):
         offset = 0
         c = self.peek(offset)
-        while f(c) and self.position + offset < len(self.source):
+        while f(c) and self.position + offset < len(self.source) - 1:
             offset += 1
             c = self.peek(offset)
         return self.source[self.position:self.position + offset]

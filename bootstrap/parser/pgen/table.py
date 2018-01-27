@@ -119,9 +119,9 @@ class ParseTable(object):
             choices = sorted(entry.split("/"))
             if len(choices) < 2: continue
             self.init_symbol_conflict_data(state, symbol, choices)
-            if list(map(lambda f: f[0], choices)) == ["r", "s"]:
+            if set(map(lambda f: f[0], choices)) == set(["r", "s"]):
                 self.resolve_sr_conflict(state, row, symbol)
-            elif list(map(lambda f: f[0], choices)) == ["r", "r"]:
+            elif set(map(lambda f: f[0], choices)) == set(["r"]):
                 self.resolve_rr_conflict(state, row, symbol)
 
     def init_symbol_conflict_data(self, state, symbol, conflict):

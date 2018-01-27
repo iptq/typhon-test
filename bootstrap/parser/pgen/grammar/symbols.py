@@ -33,17 +33,17 @@ class GEPSILON(GrammarSymbol):
 class GNEWLINE(GrammarSymbol):
     @property
     def key(self):
-        return "\\n"
+        return "Newline"
 
 class GDEDENT(GrammarSymbol):
     @property
     def key(self):
-        return "<--"
+        return "Dedent"
 
 class GINDENT(GrammarSymbol):
     @property
     def key(self):
-        return "-->"
+        return "Indent"
 
 class GIdent(GrammarSymbol):
     @property

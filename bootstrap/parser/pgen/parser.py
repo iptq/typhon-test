@@ -30,12 +30,12 @@ class Parser(object):
         shifted_token = None
         while True:
             if token is None:
-                raise Exception("unexpected end of input")
+                raise SyntaxError("unexpected end of input")
             state_n = stack[-1]
             state = self.table.get(state_n)
             column = token.symbol
             if column not in state:
-                raise Exception("unexpected token from state {}: {} (column = {})".format(state_n, token, column))
+                raise SyntaxError("unexpected token from state {}: {} (column = {})\nexpected: {}".format(state_n, token, column, state.keys()))
             
             entry = state[column]
             if "/" in entry:
