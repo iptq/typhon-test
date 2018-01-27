@@ -1,10 +1,10 @@
 import sys
 import os
 current_dir = os.path.realpath(os.path.dirname(__file__))
-sys.path.append(current_dir)
+sys.path.insert(0, current_dir)
 
 def parse(source, verbose=False):
-    from .parser import parse_from_tokens
+    from .generated_parser import Parser
     from .lexer import Lexer
 
     if verbose:
@@ -14,4 +14,5 @@ def parse(source, verbose=False):
             print(token)
 
     lexer = Lexer(source)
-    return parse_from_tokens(lexer, verbose=verbose)
+    parser = Parser()
+    return parser.parse(lexer, verbose=verbose)

@@ -19,6 +19,7 @@ class GEOF(GrammarSymbol):
 
 class GEPSILON(GrammarSymbol):
     is_epsilon = True
+    terminal = False
     @property
     def key(self):
         return "e"

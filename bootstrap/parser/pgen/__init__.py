@@ -3,30 +3,23 @@
 import sys
 import os
 current_dir = os.path.realpath(os.path.dirname(__file__))
-sys.path.append(current_dir)
+sys.path.insert(0, current_dir)
 
 from string import Template
-import pickle
-
 from generator import ParserGenerator
 from grammar import Grammar
+from pgen.parser import Parser
 
 def pgen(verbose=False):
     grammar_file = os.path.join(os.path.dirname(current_dir), "Grammar")
-    output_file = os.path.join(os.path.dirname(current_dir), "parser.py")
-    template_file = os.path.join(current_dir, "Template.py")
+    output_file = os.path.join(os.path.dirname(current_dir), "generated_parser.py")
 
     grammar = Grammar.from_file(grammar_file, verbose=verbose)
     generator = ParserGenerator(grammar, verbose=verbose)
 
-    parser_data = generator.generate(verbose=verbose)
-    with open(template_file, "r") as f:
-        template = Template(f.read())
-
-    pickled_parser_data = dict(map(lambda v: (v[0], pickle.dumps(v[1])), parser_data.items()))
-    data = template.substitute(pickled_parser_data)
+    parser = Parser(generator.generate())
     with open(output_file, "w") as f:
-        f.write(data)
+        parser.write(f)
         f.close()
 
 if __name__ == "__main__":

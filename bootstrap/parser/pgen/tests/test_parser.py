@@ -11,9 +11,9 @@ class TestParser(object):
     def test_balanced_parentheses_parser(self):
         data = "B = EMPTY, B + '(' + B + ')'"
         source = "()"
-        pgen = ParserGenerator(Grammar.from_data(data))
+        pgen = ParserGenerator(Grammar.from_data(data), verbose=True)
         lexer = Lexer(source)
         parser = Parser(pgen.generate())
-        result = parser.parse(lexer)
+        result = parser.parse(lexer, verbose=True)
         print("result", result)
         assert 0

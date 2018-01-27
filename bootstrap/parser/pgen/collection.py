@@ -19,6 +19,7 @@ class CanonicalCollection(object):
 
         self.remap()
         self.compress()
+
         # self.print()
 
     def remap(self):

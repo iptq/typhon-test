@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.insert(0, os.path.realpath(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+
 from grammar.symbols import *
 from set_generator import SetGenerator
 

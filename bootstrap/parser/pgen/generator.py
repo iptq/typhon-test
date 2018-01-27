@@ -10,7 +10,7 @@ class ParserGenerator(object):
         self.grammar = grammar
         self.table = ParseTable(CanonicalCollection(grammar), grammar, verbose=verbose)
 
-    def generate(self, verbose=False):
+    def generate(self):
         return dict(
             table=self.table.table,
             tokens=self.grammar.get_tokens(),
