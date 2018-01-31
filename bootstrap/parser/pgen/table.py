@@ -60,13 +60,13 @@ class ParseTable(object):
                 if col == "acc":
                     entry = color(entry, fg_green=True)
                 parts.append(entry)
-            rowstr = " {} ".format(color("│", fg_dark_grey=True)).join(parts)
-            border = color("│", fg_dark_grey=True)
+            rowstr = " {} ".format(color("|", fg_dark_grey=True)).join(parts)
+            border = color("|", fg_dark_grey=True)
             return "{}{} {}".format(border, rowstr, border)
         parts = []
-        top = color("┌{}─┐".format("─┬─".join(["─" * col for col in columns])), fg_dark_grey=True)
-        sep = color("├{}─┤".format("─┼─".join(["─" * col for col in columns])), fg_dark_grey=True)
-        bot = color("└{}─┘".format("─┴─".join(["─" * col for col in columns])), fg_dark_grey=True)
+        top = color("+{}-+".format("-+-".join("-" * col for col in columns)), fg_dark_grey=True)
+        sep = color("+{}-+".format("-+-".join("-" * col for col in columns)), fg_dark_grey=True)
+        bot = color("+{}-+".format("-+-".join("-" * col for col in columns)), fg_dark_grey=True)
         for i, row in enumerate(rows):
             if i == 0:
                 firstrow = get_row(row, first=True)
