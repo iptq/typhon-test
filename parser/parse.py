@@ -1,7 +1,14 @@
-from grammar.symbols import *
-from string import Template
+# pretty much direct port of https://github.com/DmitrySoshnikov/syntax
+
+import os
 from copy import deepcopy
+from string import Template
 import pickle
+
+from parser.grammar import Grammar
+from parser.models import CanonicalCollection, ParseTable
+from parser.symbols import *
+
 
 class Parser(object):
     "${dirty_hack}${actual_data}${dirty_hack}"
@@ -19,8 +26,14 @@ class Parser(object):
     def write(self, f):
         with open(__file__, "r") as f1:
             template = Template(f1.read())
-        data = "\n    pregenerated = pickle.loads({})\n    ".format(pickle.dumps(self.data))
-        source = template.substitute(dict(dirty_hack="\"", actual_data=data))
+        with open(os.path.join(os.path.dirname(__file__), "symbols.py"), "r") as f1:
+            grammar_source = f1.read()
+        symbols = "\n" + "\n".join("    {}".format(line)
+                                   for line in grammar_source.split("\n")) + "\n    "
+        data = "\n    pregenerated = pickle.loads({})\n    ".format(
+            pickle.dumps(self.data))
+        source = template.substitute(
+            dict(dirty_hack="\"", actual_data=data, symbols=symbols))
         f.write(source)
 
     def parse(self, lexer, verbose=False):
@@ -35,8 +48,9 @@ class Parser(object):
             state = self.table.get(state_n)
             column = token.symbol
             if column not in state:
-                raise SyntaxError("unexpected token from state {}: {} (column = {})\nexpected: {}".format(state_n, token, column, state.keys()))
-            
+                raise SyntaxError("unexpected token from state {}: {} (column = {})\nexpected: {}".format(
+                    state_n, token, column, state.keys()))
+
             entry = state[column]
             if "/" in entry:
                 raise Exception("unresolved conflict")
@@ -49,7 +63,7 @@ class Parser(object):
                 production = self.productions[int(entry[1:])]
                 rhs_length = len(production.right)
                 if len(production.right) == 1 and isinstance(production.right[0], GEPSILON):
-                    #special case
+                    # special case
                     next_state = stack[-1]
                     symbol = production.left
                     # stack.append(token.symbol)
@@ -74,5 +88,28 @@ class Parser(object):
                 stack.pop()
                 parsed = stack.pop()
                 return parsed
-            if verbose:
-                print("(1)", [x if type(x) is int else (type(x).__name__, repr(x)) for x in stack])
+            print("(1)", [x if type(x) is int else (
+                type(x).__name__, repr(x)) for x in stack])
+
+
+"${dirty_hack}"
+
+
+class ParserGenerator(object):
+    def __init__(self, grammar, verbose=False):
+        self.grammar = grammar
+        self.table = ParseTable(CanonicalCollection(
+            grammar), grammar, verbose=verbose)
+
+    def generate(self):
+        return dict(
+            table=self.table.table,
+            tokens=self.grammar.get_tokens(),
+            productions=self.grammar.productions,
+        )
+
+
+if __name__ == "__main__":
+    pgen()
+
+"${dirty_hack}"

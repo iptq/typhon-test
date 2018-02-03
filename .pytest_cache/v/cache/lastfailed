@@ -1,0 +1,20 @@
+{
+  "bootstrap/parser/tests/test_flatten.py": true,
+  "bootstrap/parser/tests/test_items.py": true,
+  "bootstrap/parser/tests/test_parser.py": true,
+  "bootstrap/parser/tests/test_parser_generator.py": true,
+  "bootstrap/parser/tests/test_repeater.py": true,
+  "bootstrap/parser/tests/test_set_generator.py": true,
+  "bootstrap/tests/test_flatten.py": true,
+  "bootstrap/tests/test_items.py": true,
+  "bootstrap/tests/test_parser.py": true,
+  "bootstrap/tests/test_parser_generator.py": true,
+  "bootstrap/tests/test_repeater.py": true,
+  "bootstrap/tests/test_set_generator.py": true,
+  "parser/tests/test_flatten.py": true,
+  "parser/tests/test_items.py": true,
+  "parser/tests/test_parser.py": true,
+  "parser/tests/test_parser_generator.py": true,
+  "parser/tests/test_repeater.py": true,
+  "parser/tests/test_set_generator.py": true
+}

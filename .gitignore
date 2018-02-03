@@ -2,4 +2,4 @@ __pycache__
 *.pyc
 *.pyo
 .cache
-/bootstrap/parser/generated_parser.py
+generated_*.py

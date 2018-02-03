@@ -7,4 +7,4 @@ from .visitor import Visitor
 
 def build(syntree):
     v = Visitor(syntree)
-    return v.visit(v.root)
+    # return v.visit(v.root)

@@ -1,6 +1,3 @@
-#!/usr/bin/python
-# https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form
-
 Grammar = Rule
 
 Newline = Newline_

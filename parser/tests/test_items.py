@@ -1,13 +1,7 @@
-import os
-import sys
-sys.path.append(os.path.realpath(os.path.dirname(os.path.dirname(__file__))))
-
-from collection import CanonicalCollection
-from item import Item, ItemSet
-from grammar import Grammar
-from orderedset import OrderedSet
-from set_generator import SetGenerator
-from grammar.symbols import *
+from parser.models import Item, SetGenerator, CanonicalCollection
+from parser.orderedset import ItemSet, OrderedSet
+from parser.grammar import Grammar
+from parser.symbols import *
 
 grammar = Grammar.from_data("""
 Expression = Number, Add, Sub
@@ -18,9 +12,12 @@ Sub = Expression + "-" + Expression
 collection = CanonicalCollection(grammar)
 set_generator = SetGenerator(grammar)
 
-root_item = Item(grammar.augmented, 0, grammar, collection, set_generator, OrderedSet([GEOF()]))
-base_item = Item(grammar.productions[1], 0, grammar, collection, set_generator, OrderedSet([GEOF(), GLiteral("+"), GLiteral("-")]))
+root_item = Item(grammar.augmented, 0, grammar, collection,
+                 set_generator, OrderedSet([GEOF()]))
+base_item = Item(grammar.productions[1], 0, grammar, collection, set_generator, OrderedSet(
+    [GEOF(), GLiteral("+"), GLiteral("-")]))
 advance_item = base_item.advance()
+
 
 class TestLRItem(object):
     def test_production(self):
@@ -54,7 +51,8 @@ class TestLRItem(object):
         assert items.key == "|".join(keys)
 
     def test_set_lr0_key(self):
-        other_base_item = Item(base_item.production, 0, grammar, collection, set_generator, OrderedSet([GLiteral("%")]))
+        other_base_item = Item(base_item.production, 0, grammar,
+                               collection, set_generator, OrderedSet([GLiteral("%")]))
         items = ItemSet([base_item, other_base_item, advance_item])
         keys = [base_item.lr0_key, advance_item.lr0_key]
         assert items.lr0_key == "|".join(keys)

@@ -1,16 +1,15 @@
-# the version of the compiler written in Real python
-
 import colors
+
 
 def compile(source):
     # step 0: generate parser
-    from parser.pgen import pgen
+    from parser import pgen
     pgen(verbose=True)
     print(colors.color("+ generated praser", fg_green=True))
 
     # step 1: parse tokens
-    from parser import parse
-    syntree = parse(source, verbose=True)
+    from parser import parsestring
+    syntree = parsestring(source, verbose=True)
     print(colors.color("+ parsed source", fg_green=True))
 
     # step 2: build symbol table
@@ -19,6 +18,8 @@ def compile(source):
     print(colors.color("+ built a symbol table", fg_green=True))
 
     # step 3: ???
+    return True
+
 
 if __name__ == "__main__":
     import sys

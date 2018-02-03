@@ -1,0 +1,8 @@
+{
+  "tests/test_flatten.py": true,
+  "tests/test_items.py": true,
+  "tests/test_parser.py": true,
+  "tests/test_parser_generator.py": true,
+  "tests/test_repeater.py": true,
+  "tests/test_set_generator.py": true
+}

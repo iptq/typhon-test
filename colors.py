@@ -1,5 +1,4 @@
 def color(text, **user_styles):
-
     styles = {
         # styles
         'reset': '\033[0m',
@@ -41,8 +40,9 @@ def color(text, **user_styles):
         try:
             color_text += styles[style]
         except KeyError:
-            raise KeyError('def color: parameter `{}` does not exist'.format(style))
-            
+            raise KeyError(
+                'def color: parameter `{}` does not exist'.format(style))
+
     color_text += text
     return '\033[0m{}\033[0m'.format(color_text)
 
@@ -57,4 +57,3 @@ def warning(text):
 
 def success(text):
     return color(text, fg_green=True)
-    

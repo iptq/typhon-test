@@ -1,7 +1,8 @@
-from tokens import *
+from parser.tokens import *
 
 alpha = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 digits = "012346789"
+
 
 class Lexer(object):
     def __init__(self, source):
@@ -100,7 +101,8 @@ class Lexer(object):
         offset = 0
         while self.position + offset < len(self.source):
             c = self.peek(offset=offset)
-            if c not in digits: break # decimals
+            if c not in digits:
+                break  # decimals
             self.position += 1
         self.queue.insert(0, TNumber(self.source[start:self.position]))
 
@@ -109,7 +111,8 @@ class Lexer(object):
         offset = 0
         while self.position + offset < len(self.source):
             c = self.peek(offset=offset)
-            if c not in (alpha + digits + "_"): break
+            if c not in (alpha + digits + "_"):
+                break
             self.position += 1
         self.queue.insert(0, TIdent(self.source[start:self.position]))
 
@@ -151,7 +154,7 @@ class Lexer(object):
                     found = True
                     self.queue.insert(0, TSymbol(c1))
                     self.position += 1
-        
+
         if self.queue:
             return self.queue.pop()
         elif self.position >= len(self.source) - 1:

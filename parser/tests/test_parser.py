@@ -1,12 +1,8 @@
-import os
-import sys
-sys.path.insert(0, os.path.realpath(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+from parser.lexer import Lexer
+from parser.grammar import Grammar
+from parser.symbols import *
+from parser.parse import Parser, ParserGenerator
 
-from lexer import Lexer
-from pgen.grammar import Grammar
-from pgen.grammar.symbols import *
-from pgen.generator import ParserGenerator
-from pgen.parser import Parser
 
 class TestParser(object):
     def test_balanced_parentheses_parser(self):
@@ -29,5 +25,7 @@ class TestParser(object):
         result = parser.parse(lexer)
         assert result == GNT("B")
         assert result.children == [GNT("B"), GLiteral("("), GLiteral(")")]
-        assert result.children[0].children == [GLiteral("("), GNT("B"), GLiteral(")")]
-        assert result.children[0].children[1].children == [GLiteral("("), GLiteral(")")]
+        assert result.children[0].children == [
+            GLiteral("("), GNT("B"), GLiteral(")")]
+        assert result.children[0].children[1].children == [
+            GLiteral("("), GLiteral(")")]

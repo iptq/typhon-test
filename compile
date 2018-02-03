@@ -1,5 +1,4 @@
 #!/bin/bash
 
 PYTHON=python3
-COMPILER=bootstrap
-$PYTHON -B $COMPILER/__main__.py $@
+$PYTHON -B __main__.py $@

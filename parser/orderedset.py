@@ -1,5 +1,6 @@
 from copy import deepcopy
 
+
 class OrderedSet(object):
     def __init__(self, iterable=None):
         self.elements = []
@@ -23,9 +24,12 @@ class OrderedSet(object):
         del self.map[hash(el)]
         return el
 
-    def union(self, other, exclude=[]):
+    def union(self, other, exclude=None):
+        if exclude is None:
+            exclude = []
         excludes = OrderedSet(exclude)
-        if not(type(other) in [list, set] or isinstance(other, OrderedSet)): return
+        if not(type(other) in [list, set] or isinstance(other, OrderedSet)):
+            return
         newset = deepcopy(self)
         for item in other:
             if item in excludes:
@@ -33,9 +37,12 @@ class OrderedSet(object):
             newset.add(item)
         return newset
 
-    def merge(self, other, exclude=[]):
+    def merge(self, other, exclude=None):
+        if exclude is None:
+            exclude = []
         excludes = OrderedSet(exclude)
-        if not(type(other) in [list, set] or isinstance(other, OrderedSet)): return
+        if not(type(other) in [list, set] or isinstance(other, OrderedSet)):
+            return
         for item in other:
             if item in excludes:
                 continue
@@ -45,7 +52,8 @@ class OrderedSet(object):
     def remove(self, item):
         h = hash(item)
         index = self.map.get(h)
-        if index is None: return
+        if index is None:
+            return
         del self.elements[index]
         for i in range(index, len(self.elements)):
             self.map[hash(self.elements[i])] = i
@@ -54,11 +62,14 @@ class OrderedSet(object):
     def sort(self):
         newset = deepcopy(self)
         try:
-            eltmp = list(zip(newset.map.keys(), map(lambda i: newset.elements[i], newset.map.values())))
+            eltmp = list(zip(newset.map.keys(), map(
+                lambda i: newset.elements[i], newset.map.values())))
             eltmp.sort(key=lambda e: e[1])
             newset.elements = list(map(lambda e: e[1], eltmp))
-            newset.map = dict(zip(map(lambda e: hash(e), newset.elements), range(len(newset.elements))))
-        except: pass
+            newset.map = dict(
+                zip(map(lambda e: hash(e), newset.elements), range(len(newset.elements))))
+        except:
+            pass
         return newset
 
     def __eq__(self, other):
@@ -75,7 +86,8 @@ class OrderedSet(object):
             return self.elements[key]
         elif type(key) is str:
             ind = self.map.get(key)
-            if ind is None: return None
+            if ind is None:
+                return None
             return self.elements[ind]
 
     def __iter__(self):
@@ -84,3 +96,22 @@ class OrderedSet(object):
 
     def __repr__(self):
         return "[{}]".format(", ".join([repr(item) for item in self.elements]))
+
+
+class ItemSet(OrderedSet):
+    @property
+    def key(self):
+        if not self._key:
+            self._key = "|".join(item.key for item in self.elements)
+        return self._key
+
+    @property
+    def lr0_key(self):
+        if not self._lr0_key:
+            keys = OrderedSet(item.lr0_key for item in self.elements)
+            self._lr0_key = "|".join(keys)
+        return self._lr0_key
+
+
+class StateCollection(OrderedSet):
+    pass
