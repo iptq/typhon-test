@@ -79,15 +79,15 @@ class Grammar(object):
         self._productions_with_symbol = dict()
 
     @staticmethod
-    def from_file(grammar_file, verbose=False):
+    def from_file(grammar_file, parse=ast.parse, verbose=False):
         with open(grammar_file, "r") as f:
             data = f.read()
-        return Grammar.from_data(data, verbose=verbose)
+        return Grammar.from_data(data, parse=parse, verbose=verbose)
 
     @staticmethod
-    def from_data(data, verbose=False):
+    def from_data(data, parse=ast.parse, verbose=False):
         rules = OrderedSet()
-        productions = ast.parse(data).body
+        productions = parse(data).body
         nonterminals = [production.targets[0].id for production in productions]
 
         for production in productions:

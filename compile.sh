@@ -1,4 +1,3 @@
 #!/bin/bash
-
 PYTHON=python3
 $PYTHON -B __main__.py $@

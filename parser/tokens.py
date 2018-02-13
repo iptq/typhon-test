@@ -83,3 +83,7 @@ class TNumber(Token):
 
     def __repr__(self):
         return "num({})".format(repr(self.number))
+
+    @property
+    def symbol(self):
+        return GNum()

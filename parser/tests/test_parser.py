@@ -29,3 +29,17 @@ class TestParser(object):
             GLiteral("("), GNT("B"), GLiteral(")")]
         assert result.children[0].children[1].children == [
             GLiteral("("), GLiteral(")")]
+
+    def test_arithmetic(self):
+        data = """
+OP = '+', '-', '*', '/'
+V = 'a', V + OP + V
+""".strip()
+        pgen = ParserGenerator(Grammar.from_data(data))
+        parser = Parser(pgen.generate())
+
+        lexer = Lexer("a + a")
+        for token in lexer.all():
+            print(token, type(token))
+        lexer = Lexer("a + a")
+        result = parser.parse(lexer)

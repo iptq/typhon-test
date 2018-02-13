@@ -1,21 +1,6 @@
 import os
 
 
-def parsestring(source, verbose=False):
-    from parser.generated_parser import Parser as GeneratedParser
-    from parser.lexer import Lexer
-
-    if verbose:
-        print("TOKENS")
-        lexer = Lexer(source)
-        for token in lexer.all():
-            print(token)
-
-    lexer = Lexer(source)
-    parser = GeneratedParser()
-    return parser.parse(lexer, verbose=verbose)
-
-
 def pgen(verbose=False):
     from parser.grammar import Grammar
     from parser.parse import Parser, ParserGenerator
@@ -31,3 +16,18 @@ def pgen(verbose=False):
     with open(output_file, "w") as f:
         parser.write(f)
         f.close()
+
+
+def parsestring(source, verbose=False):
+    from parser.generated_parser import Parser as GeneratedParser
+    from parser.lexer import Lexer
+
+    if verbose:
+        print("TOKENS")
+        lexer = Lexer(source)
+        for token in lexer.all():
+            print(token)
+
+    lexer = Lexer(source)
+    parser = GeneratedParser()
+    return parser.parse(lexer, verbose=verbose)

@@ -1,23 +1,6 @@
 #!/usr/bin/python
 # i put this here so my text editor reads it as python
 
-Grammar = Rule
-
-Newline = Newline_
-Newline_ = Newline_ + NEWLINE, EMPTY
-
-Rule = Newline + Rule_
-Rule_ = LHS + ":" + RHS + Newline + Rule_, EMPTY
-
-LHS = IDENT
-RHS = IDENT, STRING, \
-    "[" + RHS + "]", \
-    "{" + RHS + "}", \
-    "(" + RHS + ")", \
-    RHS + "|" + RHS, \
-    RHS + "," + RHS
-
-
 # syntax:
 #  a = b is basic production
 #  a = b + c is concatenation
@@ -25,18 +8,18 @@ RHS = IDENT, STRING, \
 #  a = {b} is optional
 #  a = [b] is the same as EMPTY, {b}
 
-# Start = Program
+Start = Program
 
-# Program = Stmt
+Program = Stmt
 
-# Stmt = SimpleStmt, CompoundStmt
-# CompoundStmt = FuncDef
-# SimpleStmt = SmallStmt
-# SmallStmt = "hello"
+Stmt = SimpleStmt, CompoundStmt
+CompoundStmt = FuncDef
+SimpleStmt = SmallStmt
+SmallStmt = "hello"
 
-# Expression = "hello"
-# Arguments = Expression
-# FuncDef = "def" + IDENT + "(" + ")" + ":" + Suite
-# FuncCall = IDENT + "(" + (Arguments) + ")"
+Expression = "hello"
+Arguments = Expression
+FuncDef = "def" + IDENT + "(" + ")" + ":" + Suite
+FuncCall = IDENT + "(" + (Arguments) + ")"
 
-# Suite = SimpleStmt, NEWLINE + INDENT + Stmt + DEDENT
+Suite = SimpleStmt, NEWLINE + INDENT + Stmt + DEDENT
