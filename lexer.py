@@ -1,39 +1,22 @@
 # ref: https://docs.python.org/3/reference/lexical_analysis.html
 
-# from keyword.kwlist
-KEYWORDS = ["False", "None", "True", "and", "as", "assert", "break", "class", "continue", "def", "del", "elif", "else", "except", "finally", "for",
-            "from", "global", "if", "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while", "with", "yield"]
-OPERATORS = sorted(["+", "-", "*", "**", "/", "//", "%", "@",
-                    "<<", ">>", "&", "|", "^", "~",
-                    "<", ">", "<=", ">=", "==", "!="], key=len, reverse=True)
-DELIMITERS = sorted(['(', ')', '[', ']', '{', '}',
-                     ',', ':', '.', ';', '@', '=', '->',
-                     '+=', '-=', '*=', '/=', '//=', '%=', '@=',
-                     '&=', '|=', '^=', '>>=', '<<=', '**='], key=len, reverse=True)
-SYMBOLS = sorted(OPERATORS + DELIMITERS, key=len, reverse=True)
-
-alpha_lower = "abcdefghijklmnopqrstuvwxyz"
-alpha_upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-alpha_all = alpha_lower + alpha_upper
-
-digit = "0123456789"
-hexdigit = digit + "abcdef"
-
-ident_first = alpha_all + "_"
-ident_rest = ident_first + digit
+# pylint: disable=W0614
+from constants import *
+from tokens import *
 
 class Token(object):
-    def __init__(self, name, line, col, length, args=None):
+    def __init__(self, type, line, col, length, args=None):
+        assert isinstance(type, TokenType)
         if args is None:
             args = []
-        self.name = name
+        self.type = type
         self.line = line
         self.col = col
         self.length = length
         self.args = args
 
     def __str__(self):
-        return "<{}({},{}:{}){}>".format(self.name, self.line, self.col, self.length, self.args)
+        return "<{}({},{}:{}){}>".format(self.type.name, self.line, self.col, self.length, self.args)
 
 def preprocess(text):
     text = text.replace("\r\n", "\n")  # crlf -> lf
@@ -72,31 +55,31 @@ class Lexer(object):
         return next(self)
 
     def read_ident(self):
-        ident = self.peek_while(lambda c: c in ident_rest)
-        name = "Keyword" if ident in KEYWORDS else "Ident"
-        return Token(name, self.line, self.col, len(ident), [ident])
+        ident = self.peek_while(lambda c: c in IDENT_REST)
+        type = T_KEYWORD if ident in KEYWORDS else T_IDENT
+        return Token(type, self.line, self.col, len(ident), [ident])
 
     def read_number(self):
-        n = self.peek_while(lambda c: c in digit)  # TODO: float
-        return Token("Integer", self.line, self.col, len(n), [n])
+        n = self.peek_while(lambda c: c in DIGIT)  # TODO: float
+        return Token(T_INTEGER, self.line, self.col, len(n), [n])
 
     def read_string(self, quote):
         self.pos += len(quote)
         s = self.peek_while(lambda c: c != quote)  # TODO: escaped characters
         self.pos += len(quote)
-        return Token("String", self.line, self.col, len(s), [s])
+        return Token(T_STRING, self.line, self.col, len(s), [s])
 
     def try_read_symbol(self, pattern):
         if pattern in OPERATORS:
-            return Token("Operator", self.line, self.col, len(pattern), [pattern])
+            return Token(T_OPERATOR, self.line, self.col, len(pattern), [pattern])
         if pattern in DELIMITERS:
-            return Token("Delimiter", self.line, self.col, len(pattern), [pattern])
+            return Token(T_DELIMITER, self.line, self.col, len(pattern), [pattern])
         return None
 
     def __next__(self):
         # this is so i can push multiple tokens to return at a time
         if self.q:
-            return self.q.pop
+            return self.q.pop()
 
         if self.newline == True:
             # oh boy
@@ -112,7 +95,7 @@ class Lexer(object):
                 return next(self)
             elif wlen > self.istack[-1]:
                 self.istack.append(wlen)
-                tok = Token("Indent", self.line, self.col, wlen - self.istack[-1])
+                tok = Token(T_INDENT, self.line, self.col, wlen - self.istack[-1])
                 self.pos += tok.length
                 self.col += tok.length
                 return tok
@@ -122,7 +105,7 @@ class Lexer(object):
                     while wlen != self.istack[-1] and self.istack[-1] != 0:
                         n = self.istack.pop()
                         amt = n - self.istack[-1]
-                        self.q.insert(0, Token("Dedent", self.line, self.col, 0, [amt]))
+                        self.q.insert(0, Token(T_DEDENT, self.line, self.col, 0, [amt]))
                         wlen -= amt
                     return next(self)
                 else:
@@ -149,12 +132,12 @@ class Lexer(object):
             self.pos += tok.length
             self.col += tok.length
             return tok
-        elif ch in digit:
+        elif ch in DIGIT:
             tok = self.read_number()
             self.pos += tok.length
             self.col += tok.length
             return tok
-        elif ch in ident_first:
+        elif ch in IDENT_FIRST:
             tok = self.read_ident()
             self.pos += tok.length
             self.col += tok.length
