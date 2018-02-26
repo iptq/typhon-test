@@ -1,8 +1,7 @@
 # ref: https://docs.python.org/3/reference/lexical_analysis.html
 
-# pylint: disable=W0614
 from constants import *
-from tokens import *
+from tree import *
 
 class Token(object):
     def __init__(self, type, line, col, length, args=None):
