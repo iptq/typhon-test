@@ -13,7 +13,7 @@ class Lexer(object):
         self.source = preprocess(source)
         self.istack = [0]  # indent stack
         self.pos = 0
-        self.line = 0
+        self.line = 1
         self.col = 0
         self.newline = True
         self.q = []

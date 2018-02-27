@@ -20,7 +20,7 @@ class Node(metaclass=NodeMeta):
         return "\n".join(s)
 
 class Expression(Node):
-    "Literal | Binop"
+    "Literal | BinOp"
 
 class BinOp(Node):
     "Expression + T_OPERATOR + Expression"
