@@ -1,9 +1,15 @@
 from tokens import *
-class TokenType(object):
-    def __init__(self, name):
-        self.name = name
 
-class Node(object):
+types = set()
+
+class NodeMeta(type):
+    def __new__(cls, name, bases, namespace):
+        c = type.__new__(cls, name, bases, dict(namespace))
+        if name != "Node":
+            types.add(c)
+        return c
+
+class Node(metaclass=NodeMeta):
     def __init__(self):
         self.children = []
 
@@ -13,18 +19,11 @@ class Node(object):
             s.extend(child.pretty(depth + 1))
         return "\n".join(s)
 
-
-T_DEDENT = TokenType("Dedent")
-T_DELIMITER = TokenType("Delimiter")
-T_IDENT = TokenType("Ident")
-T_INDENT = TokenType("Indent")
-T_INTEGER = TokenType("Integer")
-T_KEYWORD = TokenType("Keyword")
-T_OPERATOR = TokenType("Operator")
-T_STRING = TokenType("String")
-
 class Expression(Node):
-    pass
+    "Literal | Binop"
+
+class BinOp(Node):
+    "Expression + T_OPERATOR + Expression"
 
 class Literal(Expression):
-    pass
+    "T_INTEGER | T_STRING"

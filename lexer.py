@@ -1,21 +1,7 @@
 # ref: https://docs.python.org/3/reference/lexical_analysis.html
 
 from constants import *
-from tree import *
-
-class Token(object):
-    def __init__(self, type, line, col, length, args=None):
-        assert isinstance(type, TokenType)
-        if args is None:
-            args = []
-        self.type = type
-        self.line = line
-        self.col = col
-        self.length = length
-        self.args = args
-
-    def __str__(self):
-        return "<{}({},{}:{}){}>".format(self.type.name, self.line, self.col, self.length, self.args)
+from tokens import *
 
 def preprocess(text):
     text = text.replace("\r\n", "\n")  # crlf -> lf
