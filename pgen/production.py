@@ -1,12 +1,6 @@
 from constants import *
 from tokens import *
 
-T_ALT = TokenType("Alt")
-T_CONCAT = TokenType("Concat")
-T_EXPR = TokenType("Expr")
-T_LITERAL = TokenType("Literal")
-T_IDENT = TokenType("Ident")
-
 class RuleParser(object):
     @classmethod
     def parse(cls, src):
@@ -27,7 +21,7 @@ class RuleParser(object):
             s += ch
             self.pos += 1
             ch = self.src[self.pos]
-        return Token(T_IDENT, self.line, self.col, len(s), [s])
+        return Token("MT_IDENT", self.line, self.col, len(s), [s])
 
     def skip_whitespace(self):
         ch = self.src[self.pos]
@@ -66,23 +60,23 @@ class RuleParser(object):
             self.col += 1
             self.pos += 1
             ntok = self.parse_expr()
-            if ntok.type is T_ALT:
+            if ntok.type == "MT_ALT":
                 nargs = ntok.args
                 nargs.insert(0, tok)
             else:
                 nargs = [tok, ntok]
-            ftok = Token(T_ALT, self.line, self.col, 0, nargs)
+            ftok = Token("MT_ALT", self.line, self.col, 0, nargs)
             return ftok
         elif nch == "+":  # concat
             self.col += 1
             self.pos += 1
             ntok = self.parse_expr()
-            if ntok.type is T_CONCAT:
+            if ntok.type == "MT_CONCAT":
                 nargs = ntok.args
                 nargs.insert(0, tok)
             else:
                 nargs = [tok, ntok]
-            ftok = Token(T_CONCAT, self.line, self.col, 0, nargs)
+            ftok = Token("MT_CONCAT", self.line, self.col, 0, nargs)
             return ftok
         return tok
 

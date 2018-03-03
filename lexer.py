@@ -41,24 +41,24 @@ class Lexer(object):
 
     def read_ident(self):
         ident = self.peek_while(lambda c: c in IDENT_REST)
-        type = T_KEYWORD if ident in KEYWORDS else T_IDENT
+        type = "T_KEYWORD" if ident in KEYWORDS else "T_IDENT"
         return Token(type, self.line, self.col, len(ident), [ident])
 
     def read_number(self):
         n = self.peek_while(lambda c: c in DIGIT)  # TODO: float
-        return Token(T_INTEGER, self.line, self.col, len(n), [n])
+        return Token("T_INTEGER", self.line, self.col, len(n), [n])
 
     def read_string(self, quote):
         self.pos += len(quote)
         s = self.peek_while(lambda c: c != quote)  # TODO: escaped characters
         self.pos += len(quote)
-        return Token(T_STRING, self.line, self.col, len(s), [s])
+        return Token("T_STRING", self.line, self.col, len(s), [s])
 
     def try_read_symbol(self, pattern):
         if pattern in OPERATORS:
-            return Token(T_OPERATOR, self.line, self.col, len(pattern), [pattern])
+            return Token("T_OPERATOR", self.line, self.col, len(pattern), [pattern])
         if pattern in DELIMITERS:
-            return Token(T_DELIMITER, self.line, self.col, len(pattern), [pattern])
+            return Token("T_DELIMITER", self.line, self.col, len(pattern), [pattern])
         return None
 
     def __next__(self):
@@ -80,7 +80,7 @@ class Lexer(object):
                 return next(self)
             elif wlen > self.istack[-1]:
                 self.istack.append(wlen)
-                tok = Token(T_INDENT, self.line, self.col, wlen - self.istack[-1])
+                tok = Token("T_INDENT", self.line, self.col, wlen - self.istack[-1])
                 self.pos += tok.length
                 self.col += tok.length
                 return tok
@@ -90,7 +90,7 @@ class Lexer(object):
                     while wlen != self.istack[-1] and self.istack[-1] != 0:
                         n = self.istack.pop()
                         amt = n - self.istack[-1]
-                        self.q.insert(0, Token(T_DEDENT, self.line, self.col, 0, [amt]))
+                        self.q.insert(0, Token("T_DEDENT", self.line, self.col, 0, [amt]))
                         wlen -= amt
                     return next(self)
                 else:
