@@ -46,7 +46,7 @@
 
 // type
 %type<exprval> expr
-%type<stmtval> stmt simple_stmt assign_stmt funcdef_stmt
+%type<stmtval> stmt simple_stmt assign_stmt reassign_stmt funcdef_stmt
 
 %start start
 
@@ -69,9 +69,12 @@ expr: literal { $$ = new typhon::ast::Expression(); }
 
 assign_stmt: T_LET T_IDENT T_EQUALS expr { $$ = new typhon::ast::AssignStatement(); }
 ;
+reassign_stmt: T_IDENT T_EQUALS expr { $$ = new typhon::ast::ReassignStatement(); }
+;
 funcdef_stmt: T_DEF T_IDENT T_COLON suite { $$ = new typhon::ast::FuncDefStatement(*$2); }
 ;
 simple_stmt: assign_stmt { $$ = $1; }
+    | reassign_stmt { $$ = $1; }
 ;
 stmt: simple_stmt { $$ = $1; }
     | funcdef_stmt { $$ = $1; }

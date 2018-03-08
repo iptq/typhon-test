@@ -4,11 +4,17 @@
 #include <string>
 
 #include "context.hh"
+#include "types.hh"
 
 namespace typhon {
 namespace ast {
 
 class Expression {};
+
+class TypedExpression : public Expression {
+  public:
+    class Type *type;
+};
 
 class Statement {
   public:
@@ -19,6 +25,12 @@ class AssignStatement : public Statement {
   public:
     AssignStatement();
     virtual ~AssignStatement();
+};
+
+class ReassignStatement : public Statement {
+  public:
+    ReassignStatement();
+    virtual ~ReassignStatement();
 };
 
 class ExpressionStatement : public Statement {

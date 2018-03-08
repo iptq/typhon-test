@@ -9,6 +9,10 @@ AssignStatement::AssignStatement() {}
 
 AssignStatement::~AssignStatement() {}
 
+ReassignStatement::ReassignStatement() {}
+
+ReassignStatement::~ReassignStatement() {}
+
 ExpressionStatement::ExpressionStatement(class Expression *_expr)
     : expr(_expr) {}
 
