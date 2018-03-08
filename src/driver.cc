@@ -11,6 +11,11 @@ namespace typhon {
 Driver::Driver(class Context &_ctx)
     : trace_scanning(false), trace_parsing(false), ctx(_ctx) {}
 
+void Driver::show(ast::Expression *expr) {
+    ast::TypedExpression *value = expr->evaluate(&ctx);
+    std::cout << "val : " << value->to_string() << std::endl;
+}
+
 bool Driver::parse_stream(std::istream &in, const std::string &sname) {
     streamname = sname;
 

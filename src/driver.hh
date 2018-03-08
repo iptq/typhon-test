@@ -14,6 +14,7 @@ class Driver {
     bool trace_scanning;
     bool trace_parsing;
     std::string streamname;
+    void show(ast::Expression *expr);
 
     bool parse_stream(std::istream &in,
                       const std::string &sname = "stream input");
