@@ -7,7 +7,7 @@
 typedef typhon::Parser::token token;
 typedef typhon::Parser::token_type token_type;
 
-#define yyterminate() return token::END
+#define yyterminate() return token::T_EOF
 #define YY_NO_UNISTD_H
 
 %}
@@ -32,25 +32,7 @@ typedef typhon::Parser::token_type token_type;
 
 [0-9]+ {
     yylval->ival = atoi(yytext);
-    return token::INTEGER;
-}
-
-[A-Za-z][A-Za-z0-9_,.-]* {
-    yylval->sval = new std::string(yytext, yyleng);
-    return token::STRING;
-}
-
-[ \t\r]+ {
-    yylloc->step();
-}
-
-\n {
-    yylloc->lines(yyleng); yylloc->step();
-    return token::EOL;
-}
-
-. {
-    return static_cast<token_type>(*yytext);
+    return token::T_INTEGER;
 }
 
 %%

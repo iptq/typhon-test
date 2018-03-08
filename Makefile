@@ -16,7 +16,7 @@ all: $(TARGET)
 
 $(TARGET): $(SRCDIR)/scanner.cc $(SRCDIR)/parser.cc $(OBJECTS)
 	@mkdir -p $(BINDIR)
-	$(CC) $^ -o $(TARGET) $(LIB)
+	$(CC) $(OBJECTS) -o $(TARGET) $(LIB)
 
 $(SRCDIR)/scanner.cc: $(SRCDIR)/scanner.ll
 	(cd $(SRCDIR); $(LEX) -o scanner.cc scanner.ll)

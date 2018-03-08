@@ -30,8 +30,8 @@
     std::string*	sval;
 }
 
-%token EOL
-%token INTEGER STRING DOUBLE END
+%token T_INTEGER
+%token T_NEWLINE T_EOF
 
 %{
 
@@ -45,7 +45,13 @@
 
 %%
 
-start: ';'
+statement: T_INTEGER
+
+;
+
+start: /* empty */
+    | start ';'
+    | start statement T_EOF
 
 %%
 
