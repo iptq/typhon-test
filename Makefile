@@ -14,17 +14,27 @@ CFLAGS := -std=c++14 -static -g -Wall -Werror
 
 all: $(TARGET)
 
-$(TARGET): $(SRCDIR)/scanner.cc $(SRCDIR)/parser.cc $(OBJECTS)
+$(TARGET): $(BUILDDIR)/parser.o $(BUILDDIR)/scanner.o $(OBJECTS)
 	@mkdir -p $(BINDIR)
-	$(CC) $(OBJECTS) -o $(TARGET) $(LIB)
+	$(CC) $^ -o $(TARGET) $(LIB)
+
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+	@mkdir -p $(BUILDDIR)
+	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+# pgen
 
 $(SRCDIR)/scanner.cc: $(SRCDIR)/scanner.ll
 	(cd $(SRCDIR); $(LEX) -o scanner.cc scanner.ll)
 
+$(BUILDDIR)/scanner.o: $(SRCDIR)/scanner.cc
+	@mkdir -p $(BUILDDIR)
+	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
 $(SRCDIR)/parser.cc: $(SRCDIR)/parser.yy
 	(cd $(SRCDIR); $(YACC) -o parser.cc parser.yy)
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+$(BUILDDIR)/parser.o: $(SRCDIR)/parser.cc
 	@mkdir -p $(BUILDDIR)
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
