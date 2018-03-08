@@ -1,6 +1,3 @@
-// $Id$
-/** \file expression.h Implements an example calculator class group. */
-
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
@@ -294,9 +291,6 @@ public:
     }
 };
 
-/** Calculator context used to save the parsed expressions. This context is
- * passed along to the example::Driver class and fill during parsing via bison
- * actions. */
 class CalcContext
 {
 public:

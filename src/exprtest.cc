@@ -3,13 +3,13 @@
 #include <iostream>
 #include <fstream>
 
-#include "driver.h"
+#include "driver.hh"
 #include "expression.h"
 
 int main(int argc, char *argv[])
 {
     CalcContext calc;
-    example::Driver driver(calc);
+    typhon::Driver driver(calc);
     bool readfile = false;
 
     for(int ai = 1; ai < argc; ++ai)

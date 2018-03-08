@@ -6,7 +6,7 @@ AC_INIT([typhon], [0.1.4])
 AC_CONFIG_SRCDIR([src/exprtest.cc])
 AC_CONFIG_AUX_DIR([scripts])
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 if test "$CFLAGS" == ""; then

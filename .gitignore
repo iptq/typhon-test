@@ -10,3 +10,5 @@ config.log
 config.status
 Makefile
 Makefile.in
+
+/autom4te.cache

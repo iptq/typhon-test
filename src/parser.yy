@@ -1,7 +1,4 @@
-/* $Id$ -*- mode: c++ -*- */
-/** \file parser.yy Contains the example Bison parser source */
-
-%{ /*** C/C++ Declarations ***/
+%{
 
 #include <stdio.h>
 #include <string>
@@ -15,8 +12,8 @@
 %start start
 %defines
 %skeleton "lalr1.cc"
-%name-prefix="typhon"
-%define "parser_class_name" "Parser"
+%name-prefix "typhon"
+%define "parser_class_name" { Parser }
 
 %locations
 %initial-action
@@ -50,8 +47,8 @@
 
 %{
 
-#include "driver.h"
-#include "scanner.h"
+#include "driver.hh"
+#include "scanner.hh"
 
 #undef yylex
 #define yylex driver.lexer->lex
@@ -72,7 +69,6 @@ constant : INTEGER
 variable : STRING
            {
 	       if (!driver.calc.existsVariable(*$1)) {
-		   error(yyloc, std::string("Unknown variable \"") + *$1 + "\"");
 		   delete $1;
 		   YYERROR;
 	       }

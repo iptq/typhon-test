@@ -5,9 +5,12 @@ stack.hh
 position.hh
 
 parser.cc
-parser.h
+scanner.cc
+parser.hh
 
-libexampleparser.a
 FlexLexer.h
 .deps
 Makefile.plain
+
+tci
+lib*.a

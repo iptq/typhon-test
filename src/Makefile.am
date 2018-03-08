@@ -6,14 +6,14 @@ AM_CXXFLAGS = -W -Wall -Wextra -ansi
 noinst_LIBRARIES = libtyphon.a
 
 libtyphon_a_SOURCES = \
-	parser.yy scanner.ll parser.h scanner.h y.tab.h \
+	parser.yy scanner.ll parser.h scanner.hh y.tab.h \
 	location.hh position.hh stack.hh FlexLexer.h \
-	driver.cc driver.h expression.h
+	driver.cc driver.hh expression.h
 
-bin_PROGRAMS = ../tci
+bin_PROGRAMS = tci
 
-exprtest_SOURCES = exprtest.cc
-exprtest_DEPENDENCIES = libtyphon.a
+tci_SOURCES = exprtest.cc
+tci_DEPENDENCIES = libtyphon.a
 
 LIBS = libtyphon.a
 
@@ -21,11 +21,7 @@ LIBS = libtyphon.a
 # lex.yy.cc and the automake ylwrap script only checks for lex.yy.c
 AM_LFLAGS = -olex.yy.c
 
-EXTRA_DIST = exprtest.txt \
-	exprtest.vcproj libtyphon.vcproj \
-	Makefile.plain
-
 extraclean:
-	rm -f parser.cc parser.h scanner.cc
+	rm -f parser.cc parser.hh scanner.cc
 
 rebuild: clean extraclean all

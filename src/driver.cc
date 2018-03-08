@@ -1,13 +1,10 @@
-// $Id$
-/** \file driver.cc Implementation of the example::Driver class. */
-
 #include <fstream>
 #include <sstream>
 
-#include "driver.h"
-#include "scanner.h"
+#include "driver.hh"
+#include "scanner.hh"
 
-namespace example {
+namespace typhon {
 
 Driver::Driver(class CalcContext& _calc)
     : trace_scanning(false),
@@ -53,4 +50,4 @@ void Driver::error(const std::string& m)
     std::cerr << m << std::endl;
 }
 
-} // namespace example
+} // namespace typhon

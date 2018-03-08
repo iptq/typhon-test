@@ -1,5 +1,5 @@
 // $Id$
-/** \file y.tab.h Forwarding include file to parser.h (actually by including scanner.h) */
+/** \file y.tab.h Forwarding include file to parser.h (actually by including scanner.hh) */
 
 /* When using automake the bison parser file "xyz.yy" is processed by the
  * ylwrap script. It calls bison in a separate directory, which outputs source
@@ -9,5 +9,5 @@
  * source file "xyz.cc" still refers to the default "y.tab.h". The easiest
  * work-around is to use this forwarding include file. */
 
-#include "scanner.h"
+#include "scanner.hh"
 

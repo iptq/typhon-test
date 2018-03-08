@@ -1,37 +1,33 @@
 // $Id$
 
-#ifndef EXAMPLE_SCANNER_H
-#define EXAMPLE_SCANNER_H
-
-// Flex expects the signature of yylex to be defined in the macro YY_DECL, and
-// the C++ parser expects it to be declared. We can factor both as follows.
+#ifndef SRC_SCANNER_H_
+#define SRC_SCANNER_H_
 
 #ifndef YY_DECL
-
 #define	YY_DECL						\
-    example::Parser::token_type				\
-    example::Scanner::lex(				\
-	example::Parser::semantic_type* yylval,		\
-	example::Parser::location_type* yylloc		\
+    typhon::Parser::token_type				\
+    typhon::Scanner::lex(				\
+	typhon::Parser::semantic_type* yylval,		\
+	typhon::Parser::location_type* yylloc		\
     )
 #endif
 
 #ifndef __FLEX_LEXER_H
-#define yyFlexLexer ExampleFlexLexer
+#define yyFlexLexer TyphonFlexLexer
 #include "FlexLexer.h"
 #undef yyFlexLexer
 #endif
 
-#include "parser.h"
+#include "parser.hh"
 
-namespace example {
+namespace typhon {
 
 /** Scanner is a derived class to add some extra function to the scanner
  * class. Flex itself creates a class named yyFlexLexer, which is renamed using
- * macros to ExampleFlexLexer. However we change the context of the generated
+ * macros to TyphonFlexLexer. However we change the context of the generated
  * yylex() function to be contained within the Scanner class. This is required
- * because the yylex() defined in ExampleFlexLexer has no parameters. */
-class Scanner : public ExampleFlexLexer
+ * because the yylex() defined in TyphonFlexLexer has no parameters. */
+class Scanner : public TyphonFlexLexer
 {
 public:
     /** Create a new scanner object. The streams arg_yyin and arg_yyout default
@@ -55,6 +51,6 @@ public:
     void set_debug(bool b);
 };
 
-} // namespace example
+} // namespace typhon
 
-#endif // EXAMPLE_SCANNER_H
+#endif
