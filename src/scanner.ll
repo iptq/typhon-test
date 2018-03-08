@@ -29,7 +29,12 @@ typedef typhon::Parser::token_type token_type;
     yylloc->step();
 %}
 
-= { return token::T_EQUALS; }
+\= { return token::T_EQUALS; }
+\: { return token::T_COLON; }
+\( { return token::T_LPAREN; }
+\) { return token::T_RPAREN; }
+
+def { return token::T_DEF; }
 
 [0-9]+ {
     yylval->ival = atoi(yytext);

@@ -1,6 +1,8 @@
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
+#include "ast.hh"
 #include "driver.hh"
 #include "scanner.hh"
 

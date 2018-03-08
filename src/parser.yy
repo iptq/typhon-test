@@ -27,15 +27,24 @@
     int  			ival;
     double 			fval;
     std::string*	sval;
+    class typhon::ast::Statement* stmtval;
 }
 
 %token<int> T_INTEGER
-%token<string> T_IDENT
+%token<sval> T_IDENT
 %token T_NEWLINE
 %token T_EOF 0
 
+%token T_INDENT T_DEDENT
+
+// keywords
+%token T_DEF
+
 // symbols
-%token T_EQUALS
+%token T_EQUALS T_COLON T_LPAREN T_RPAREN
+
+// type
+%type<stmtval> stmt  funcdef_stmt
 
 %start start
 
@@ -55,11 +64,25 @@ literal: T_INTEGER
 ;
 expr: literal
 ;
+
 assign_stmt: T_IDENT T_EQUALS expr
 ;
-stmt: assign_stmt
+funcdef_stmt: T_DEF T_IDENT T_COLON suite { $$ = new typhon::ast::FuncDef(*$2); }
 ;
-start: /* empty */ | stmt T_EOF
+simple_stmt: assign_stmt
+;
+stmt: simple_stmt { $$ = new typhon::ast::Statement(); }
+    | funcdef_stmt { $$ = $1; }
+;
+stmts: stmts_
+;
+stmts_: /* empty */ | stmt stmts_ T_NEWLINE
+;
+
+suite: simple_stmt | T_NEWLINE T_INDENT stmts T_DEDENT
+;
+start: /* empty */
+    | stmt T_EOF { $1->evaluate(driver.ctx); }
 
 %%
 
