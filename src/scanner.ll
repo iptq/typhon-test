@@ -29,10 +29,16 @@ typedef typhon::Parser::token_type token_type;
     yylloc->step();
 %}
 
+= { return token::T_EQUALS; }
 
 [0-9]+ {
     yylval->ival = atoi(yytext);
     return token::T_INTEGER;
+}
+
+[a-zA-Z_][a-zA-Z0-9_]* {
+    yylval->sval = new std::string(yytext);
+    return token::T_IDENT;
 }
 
 %%

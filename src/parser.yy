@@ -4,12 +4,11 @@
 #include <string>
 #include <vector>
 
-#include "expression.h"
+#include "ast.hh"
 
 %}
 
 %debug
-%start start
 %defines
 %skeleton "lalr1.cc"
 %name-prefix "typhon"
@@ -30,8 +29,15 @@
     std::string*	sval;
 }
 
-%token T_INTEGER
-%token T_NEWLINE T_EOF
+%token<int> T_INTEGER
+%token<string> T_IDENT
+%token T_NEWLINE
+%token T_EOF 0
+
+// symbols
+%token T_EQUALS
+
+%start start
 
 %{
 
@@ -45,13 +51,15 @@
 
 %%
 
-statement: T_INTEGER
-
+literal: T_INTEGER
 ;
-
-start: /* empty */
-    | start ';'
-    | start statement T_EOF
+expr: literal
+;
+assign_stmt: T_IDENT T_EQUALS expr
+;
+stmt: assign_stmt
+;
+start: /* empty */ | stmt T_EOF
 
 %%
 

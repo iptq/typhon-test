@@ -9,7 +9,7 @@ int main() {
 
     // main loop
     std::string line;
-    while (std::cout << ">>> " && std::getline(std::cin, line) &&
+    while (std::cout << "tp> " && std::getline(std::cin, line) &&
            !std::cin.eof()) {
         driver.parse_string(line, "input");
     }
