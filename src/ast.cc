@@ -5,19 +5,23 @@
 namespace typhon {
 namespace ast {
 
-TypedExpression *Expression::evaluate(class Context *ctx) {
-    return static_cast<class TypedExpression *>(this);
+TypedExpression *Expression::evaluate(Context *ctx) {
+    return static_cast<TypedExpression *>(this);
 }
 
 IntegerLiteralExpression::IntegerLiteralExpression(int _n) { n = _n; }
 
+TypedExpression *IntegerLiteralExpression::evaluate(Context *ctx) {
+    return this;
+}
+
 VariableExpression::VariableExpression(std::string _name) { name = _name; }
 
-TypedExpression *VariableExpression::evaluate(class Context *ctx) {
+TypedExpression *VariableExpression::evaluate(Context *ctx) {
     return ctx->load(name);
 }
 
-AssignStatement::AssignStatement(std::string _name, class Expression *_expr) {
+AssignStatement::AssignStatement(std::string _name, Expression *_expr) {
     // TODO: figure out type of expr here
     name = _name;
     expr = _expr;
@@ -25,18 +29,18 @@ AssignStatement::AssignStatement(std::string _name, class Expression *_expr) {
 
 AssignStatement::~AssignStatement() {}
 
-void AssignStatement::evaluate(class Context *ctx) {
-    ctx->store(name, static_cast<class TypedExpression *>(expr));
+void AssignStatement::evaluate(Context *ctx) {
+    TypedExpression *value = expr->evaluate(ctx);
+    ctx->store(name, value);
 }
 
 ReassignStatement::ReassignStatement() {}
 
 ReassignStatement::~ReassignStatement() {}
 
-ExpressionStatement::ExpressionStatement(class Expression *_expr)
-    : expr(_expr) {}
+ExpressionStatement::ExpressionStatement(Expression *_expr) : expr(_expr) {}
 
-void ExpressionStatement::evaluate(class Context *ctx) {
+void ExpressionStatement::evaluate(Context *ctx) {
     std::cout << "expression" << std::endl;
 }
 
@@ -44,7 +48,7 @@ ExpressionStatement::~ExpressionStatement() {}
 
 FuncDefStatement::FuncDefStatement(std::string _name) : name(_name) {}
 
-void FuncDefStatement::evaluate(class Context *ctx) {
+void FuncDefStatement::evaluate(Context *ctx) {
     std::cout << "statement:" << name << std::endl;
 }
 

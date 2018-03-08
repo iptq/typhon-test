@@ -10,7 +10,7 @@ TARGET := $(BINDIR)/tci
 SRCEXT := cc
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -std=c++14 -static -g -Wall -Werror
+CFLAGS := -std=c++14 -static -g -Wall
 
 all: $(TARGET)
 

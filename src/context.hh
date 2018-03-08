@@ -13,10 +13,10 @@ class TypedExpression; // forward decl
 
 class Context {
   public:
-    void store(std::string key, class ast::TypedExpression *value);
+    void store(std::string key, ast::TypedExpression *value);
     ast::TypedExpression *load(std::string key);
 
-    std::map<std::string, class ast::TypedExpression> globals;
+    std::map<std::string, ast::TypedExpression *> globals;
 };
 
 } // namespace typhon

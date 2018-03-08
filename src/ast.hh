@@ -14,7 +14,7 @@ class TypedExpression;
 
 class Expression {
   public:
-    virtual TypedExpression *evaluate(class Context *ctx);
+    virtual TypedExpression *evaluate(Context *ctx);
     virtual std::string to_string() { return "unevaluated expr"; }
 };
 
@@ -28,27 +28,28 @@ class LiteralExpression : public TypedExpression {};
 class IntegerLiteralExpression : public LiteralExpression {
   public:
     IntegerLiteralExpression(int _n);
-    virtual std::string to_string() { return std::to_string(n); }
+    TypedExpression *evaluate(Context *ctx) override;
+    std::string to_string() override { return std::to_string(n); }
     int n;
 };
 
 class VariableExpression : public TypedExpression {
   public:
     VariableExpression(std::string _name);
-    virtual TypedExpression *evaluate(class Context *ctx);
+    TypedExpression *evaluate(Context *ctx) override;
     std::string name;
 };
 
 class Statement {
   public:
-    virtual void evaluate(class Context *ctx) {}
+    virtual void evaluate(Context *ctx) {}
 };
 
 class AssignStatement : public Statement {
   public:
-    AssignStatement(std::string _name, class Expression *_expr);
+    AssignStatement(std::string _name, Expression *_expr);
     virtual ~AssignStatement();
-    virtual void evaluate(class Context *ctx);
+    void evaluate(Context *ctx) override;
 
     std::string name;
     class Expression *expr;
@@ -62,9 +63,9 @@ class ReassignStatement : public Statement {
 
 class ExpressionStatement : public Statement {
   public:
-    ExpressionStatement(class Expression *_expr);
+    ExpressionStatement(Expression *_expr);
     virtual ~ExpressionStatement();
-    virtual void evaluate(class Context *ctx);
+    void evaluate(Context *ctx) override;
 
     class Expression *expr;
 };
@@ -73,7 +74,7 @@ class FuncDefStatement : public Statement {
   public:
     FuncDefStatement(std::string _name);
     virtual ~FuncDefStatement();
-    virtual void evaluate(class Context *ctx);
+    void evaluate(Context *ctx) override;
 
     std::string name;
 };
