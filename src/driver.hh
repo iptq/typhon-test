@@ -4,26 +4,27 @@
 #include <string>
 #include <vector>
 
-class CalcContext;
+#include "context.hh"
 
 namespace typhon {
 
-class Driver
-{
-public:
-    Driver(class CalcContext& calc);
+class Driver {
+  public:
+    Driver(class Context &ctx);
     bool trace_scanning;
     bool trace_parsing;
     std::string streamname;
 
-    bool parse_stream(std::istream& in,const std::string& sname = "stream input");
-    bool parse_string(const std::string& input, const std::string& sname = "string stream");
-    bool parse_file(const std::string& filename);
-    void error(const class location& l, const std::string& m);
-    void error(const std::string& m);
+    bool parse_stream(std::istream &in,
+                      const std::string &sname = "stream input");
+    bool parse_string(const std::string &input,
+                      const std::string &sname = "string stream");
+    bool parse_file(const std::string &filename);
+    void error(const class location &l, const std::string &m);
+    void error(const std::string &m);
 
-    class Scanner* lexer;
-    class CalcContext& calc;
+    class Scanner *lexer;
+    class Context &ctx;
 };
 
 } // namespace typhon
