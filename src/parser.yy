@@ -28,6 +28,7 @@
     double 			fval;
     std::string*	sval;
     class typhon::ast::Statement* stmtval;
+    class typhon::ast::Expression* exprval;
 }
 
 %token<int> T_INTEGER
@@ -38,13 +39,14 @@
 %token T_INDENT T_DEDENT
 
 // keywords
-%token T_DEF
+%token T_DEF T_LET
 
 // symbols
 %token T_EQUALS T_COLON T_LPAREN T_RPAREN
 
 // type
-%type<stmtval> stmt  funcdef_stmt
+%type<exprval> expr
+%type<stmtval> stmt simple_stmt assign_stmt funcdef_stmt
 
 %start start
 
@@ -62,16 +64,16 @@
 
 literal: T_INTEGER
 ;
-expr: literal
+expr: literal { $$ = new typhon::ast::Expression(); }
 ;
 
-assign_stmt: T_IDENT T_EQUALS expr
+assign_stmt: T_LET T_IDENT T_EQUALS expr { $$ = new typhon::ast::AssignStatement(); }
 ;
-funcdef_stmt: T_DEF T_IDENT T_COLON suite { $$ = new typhon::ast::FuncDef(*$2); }
+funcdef_stmt: T_DEF T_IDENT T_COLON suite { $$ = new typhon::ast::FuncDefStatement(*$2); }
 ;
-simple_stmt: assign_stmt
+simple_stmt: assign_stmt { $$ = $1; }
 ;
-stmt: simple_stmt { $$ = new typhon::ast::Statement(); }
+stmt: simple_stmt { $$ = $1; }
     | funcdef_stmt { $$ = $1; }
 ;
 stmts: stmts_
@@ -82,6 +84,7 @@ stmts_: /* empty */ | stmt stmts_ T_NEWLINE
 suite: simple_stmt | T_NEWLINE T_INDENT stmts T_DEDENT
 ;
 start: /* empty */
+    | expr T_EOF { (new typhon::ast::ExpressionStatement($1))->evaluate(driver.ctx); }
     | stmt T_EOF { $1->evaluate(driver.ctx); }
 
 %%

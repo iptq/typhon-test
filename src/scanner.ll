@@ -35,6 +35,7 @@ typedef typhon::Parser::token_type token_type;
 \) { return token::T_RPAREN; }
 
 def { return token::T_DEF; }
+let { return token::T_LET; }
 
 [0-9]+ {
     yylval->ival = atoi(yytext);

@@ -16,6 +16,7 @@
 #undef yyFlexLexer
 #endif
 
+#include "ast.hh"
 #include "parser.hh"
 
 namespace typhon {

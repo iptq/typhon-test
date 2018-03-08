@@ -15,12 +15,28 @@ class Statement {
     virtual void evaluate(class Context &ctx) {}
 };
 
-class FuncDef : public Statement {
+class AssignStatement : public Statement {
   public:
-    FuncDef(std::string _name);
-    virtual ~FuncDef();
-    std::string name;
+    AssignStatement();
+    virtual ~AssignStatement();
+};
+
+class ExpressionStatement : public Statement {
+  public:
+    ExpressionStatement(class Expression *_expr);
+    virtual ~ExpressionStatement();
     virtual void evaluate(class Context &ctx);
+
+    class Expression *expr;
+};
+
+class FuncDefStatement : public Statement {
+  public:
+    FuncDefStatement(std::string _name);
+    virtual ~FuncDefStatement();
+    virtual void evaluate(class Context &ctx);
+
+    std::string name;
 };
 
 } // namespace ast
