@@ -1,0 +1,13 @@
+*.o
+exprtest
+location.hh
+stack.hh
+position.hh
+
+parser.cc
+parser.h
+
+libexampleparser.a
+FlexLexer.h
+.deps
+Makefile.plain

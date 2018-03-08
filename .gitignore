@@ -1,0 +1,12 @@
+*.o
+bin
+build
+
+doxygen-html
+/aclocal.m4
+/configure
+scripts
+config.log
+config.status
+Makefile
+Makefile.in
