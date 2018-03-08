@@ -31,7 +31,7 @@
     class typhon::ast::Expression* exprval;
 }
 
-%token<int> T_INTEGER
+%token<ival> T_INTEGER
 %token<sval> T_IDENT
 %token T_NEWLINE
 %token T_EOF 0
@@ -45,7 +45,7 @@
 %token T_EQUALS T_COLON T_LPAREN T_RPAREN
 
 // type
-%type<exprval> expr literal
+%type<exprval> expr literal variable
 %type<stmtval> stmt simple_stmt assign_stmt reassign_stmt funcdef_stmt
 
 %start start
@@ -62,12 +62,12 @@
 
 %%
 
-literal: T_INTEGER { $$ = new typhon::ast::IntegerLiteralExpression(1); }
+literal: T_INTEGER { $$ = new typhon::ast::IntegerLiteralExpression($1); }
 ;
-variable: T_IDENT
+variable: T_IDENT { $$ = new typhon::ast::VariableExpression(*$1); }
 ;
 expr: literal { $$ = $1; }
-    | variable { $$ = new typhon::ast::IntegerLiteralExpression(1); }
+    | variable { $$ = $1; }
 ;
 
 assign_stmt: T_LET T_IDENT T_EQUALS expr { $$ = new typhon::ast::AssignStatement(*$2, $4); }
@@ -91,7 +91,7 @@ suite: simple_stmt | T_NEWLINE T_INDENT stmts T_DEDENT
 ;
 start: /* empty */
     | expr T_EOF { driver.show($1); }
-    | stmt T_EOF { $1->evaluate(driver.ctx); }
+    | stmt T_EOF { $1->evaluate(&driver.ctx); }
 
 %%
 

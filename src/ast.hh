@@ -4,6 +4,7 @@
 #include <string>
 
 #include "context.hh"
+#include "exceptions.hh"
 #include "types.hh"
 
 namespace typhon {
@@ -14,7 +15,7 @@ class TypedExpression;
 class Expression {
   public:
     virtual TypedExpression *evaluate(class Context *ctx);
-    virtual std::string to_string() { return "expr"; }
+    virtual std::string to_string() { return "unevaluated expr"; }
 };
 
 class TypedExpression : public Expression {
@@ -27,7 +28,15 @@ class LiteralExpression : public TypedExpression {};
 class IntegerLiteralExpression : public LiteralExpression {
   public:
     IntegerLiteralExpression(int _n);
+    virtual std::string to_string() { return std::to_string(n); }
     int n;
+};
+
+class VariableExpression : public TypedExpression {
+  public:
+    VariableExpression(std::string _name);
+    virtual TypedExpression *evaluate(class Context *ctx);
+    std::string name;
 };
 
 class Statement {

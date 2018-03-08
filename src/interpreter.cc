@@ -2,6 +2,7 @@
 
 #include "context.hh"
 #include "driver.hh"
+#include "exceptions.hh"
 
 int main() {
     typhon::Context ctx;
@@ -11,6 +12,10 @@ int main() {
     std::string line;
     while (std::cout << "tp> " && std::getline(std::cin, line) &&
            !std::cin.eof()) {
-        driver.parse_string(line, "input");
+        try {
+            driver.parse_string(line, "input");
+        } catch (typhon::UnboundVariableException e) {
+            std::cout << "[!] Error: Unbound variable." << std::endl;
+        }
     }
 }

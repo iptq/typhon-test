@@ -6,10 +6,16 @@ namespace typhon {
 namespace ast {
 
 TypedExpression *Expression::evaluate(class Context *ctx) {
-    return new TypedExpression();
+    return static_cast<class TypedExpression *>(this);
 }
 
 IntegerLiteralExpression::IntegerLiteralExpression(int _n) { n = _n; }
+
+VariableExpression::VariableExpression(std::string _name) { name = _name; }
+
+TypedExpression *VariableExpression::evaluate(class Context *ctx) {
+    return ctx->load(name);
+}
 
 AssignStatement::AssignStatement(std::string _name, class Expression *_expr) {
     // TODO: figure out type of expr here

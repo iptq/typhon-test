@@ -8,12 +8,13 @@
 namespace typhon {
 
 namespace ast {
-class TypedExpression;
+class TypedExpression; // forward decl
 }
 
 class Context {
   public:
     void store(std::string key, class ast::TypedExpression *value);
+    ast::TypedExpression *load(std::string key);
 
     std::map<std::string, class ast::TypedExpression> globals;
 };
