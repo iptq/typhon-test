@@ -10,6 +10,13 @@
 namespace typhon {
 namespace ast {
 
+enum BINOP {
+    O_PLUS,
+    O_MINUS,
+    O_STAR,
+    O_SLASH,
+};
+
 class TypedExpression;
 
 class Expression {
@@ -28,16 +35,27 @@ class LiteralExpression : public TypedExpression {};
 class IntegerLiteralExpression : public LiteralExpression {
   public:
     IntegerLiteralExpression(int _n);
-    TypedExpression *evaluate(Context *ctx) override;
-    std::string to_string() override { return std::to_string(n); }
+    TypedExpression *evaluate(Context *ctx);
+    std::string to_string() { return std::to_string(n); }
     int n;
 };
 
 class VariableExpression : public TypedExpression {
   public:
     VariableExpression(std::string _name);
-    TypedExpression *evaluate(Context *ctx) override;
+    TypedExpression *evaluate(Context *ctx);
     std::string name;
+};
+
+class BinaryOperationExpression : public TypedExpression {
+  public:
+    BinaryOperationExpression(Expression *_left, enum BINOP _op,
+                              Expression *_right);
+    TypedExpression *evaluate(Context *ctx);
+
+    Expression *left;
+    enum BINOP op;
+    Expression *right;
 };
 
 class Statement {
@@ -49,7 +67,7 @@ class AssignStatement : public Statement {
   public:
     AssignStatement(std::string _name, Expression *_expr);
     virtual ~AssignStatement();
-    void evaluate(Context *ctx) override;
+    void evaluate(Context *ctx);
 
     std::string name;
     class Expression *expr;
@@ -65,7 +83,7 @@ class ExpressionStatement : public Statement {
   public:
     ExpressionStatement(Expression *_expr);
     virtual ~ExpressionStatement();
-    void evaluate(Context *ctx) override;
+    void evaluate(Context *ctx);
 
     class Expression *expr;
 };
@@ -74,7 +92,7 @@ class FuncDefStatement : public Statement {
   public:
     FuncDefStatement(std::string _name);
     virtual ~FuncDefStatement();
-    void evaluate(Context *ctx) override;
+    void evaluate(Context *ctx);
 
     std::string name;
 };

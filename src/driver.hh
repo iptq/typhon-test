@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "ast.hh"
 #include "context.hh"
 
 namespace typhon {

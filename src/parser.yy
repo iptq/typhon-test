@@ -24,11 +24,14 @@
 %error-verbose
 
 %union {
+    char            cval;
     int  			ival;
     double 			fval;
     std::string*	sval;
-    class typhon::ast::Statement* stmtval;
-    class typhon::ast::Expression* exprval;
+
+    typhon::ast::BINOP binop;
+    typhon::ast::Statement* stmtval;
+    typhon::ast::Expression* exprval;
 }
 
 %token<ival> T_INTEGER
@@ -43,6 +46,7 @@
 
 // symbols
 %token T_EQUALS T_COLON T_LPAREN T_RPAREN
+%token<binop> T_BINOP
 
 // type
 %type<exprval> expr literal variable
@@ -68,6 +72,7 @@ variable: T_IDENT { $$ = new typhon::ast::VariableExpression(*$1); }
 ;
 expr: literal { $$ = $1; }
     | variable { $$ = $1; }
+    | expr T_BINOP expr { $$ = new typhon::ast::BinaryOperationExpression($1, $2, $3); }
 ;
 
 assign_stmt: T_LET T_IDENT T_EQUALS expr { $$ = new typhon::ast::AssignStatement(*$2, $4); }

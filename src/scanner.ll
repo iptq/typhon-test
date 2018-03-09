@@ -34,6 +34,8 @@ typedef typhon::Parser::token_type token_type;
 \( { return token::T_LPAREN; }
 \) { return token::T_RPAREN; }
 
+\+ { yylval->binop = ast::O_PLUS; return token::T_BINOP; }
+
 def { return token::T_DEF; }
 let { return token::T_LET; }
 

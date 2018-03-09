@@ -3,8 +3,6 @@
 
 #include <map>
 
-#include "ast.hh"
-
 namespace typhon {
 
 namespace ast {
