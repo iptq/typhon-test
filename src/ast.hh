@@ -21,13 +21,15 @@ class TypedExpression;
 
 class Expression {
   public:
-    virtual TypedExpression *evaluate(Context *ctx);
+    virtual TypedExpression *typecheck(Context *ctx){};
     virtual std::string to_string() { return "unevaluated expr"; }
 };
 
 class TypedExpression : public Expression {
   public:
-    class Type *type;
+    virtual TypedExpression *typecheck(Context *ctx) { return this; }
+    virtual TypedExpression *evaluate(Context *ctx);
+    type::Type *type;
 };
 
 class LiteralExpression : public TypedExpression {};
@@ -37,6 +39,7 @@ class IntegerLiteralExpression : public LiteralExpression {
     IntegerLiteralExpression(int _n);
     TypedExpression *evaluate(Context *ctx);
     std::string to_string() { return std::to_string(n); }
+
     int n;
 };
 
@@ -69,7 +72,7 @@ class AssignStatement : public Statement {
     void evaluate(Context *ctx);
 
     std::string name;
-    class Expression *expr;
+    Expression *expr;
 };
 
 class ReassignStatement : public Statement {
@@ -84,7 +87,7 @@ class ExpressionStatement : public Statement {
     virtual ~ExpressionStatement();
     void evaluate(Context *ctx);
 
-    class Expression *expr;
+    Expression *expr;
 };
 
 class FuncDefStatement : public Statement {
