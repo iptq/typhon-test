@@ -8,8 +8,7 @@
 
 namespace typhon {
 
-Driver::Driver(class Context &_ctx)
-    : trace_scanning(false), trace_parsing(false), ctx(_ctx) {}
+Driver::Driver(class Context &_ctx) : trace_scanning(false), trace_parsing(false), ctx(_ctx) {}
 
 void Driver::show(ast::Expression *expr) {
     ast::TypedExpression *value = expr->evaluate(&ctx);
@@ -40,9 +39,7 @@ bool Driver::parse_string(const std::string &input, const std::string &sname) {
     return parse_stream(iss, sname);
 }
 
-void Driver::error(const class location &l, const std::string &m) {
-    std::cerr << l << ": " << m << std::endl;
-}
+void Driver::error(const class location &l, const std::string &m) { std::cerr << l << ": " << m << std::endl; }
 
 void Driver::error(const std::string &m) { std::cerr << m << std::endl; }
 

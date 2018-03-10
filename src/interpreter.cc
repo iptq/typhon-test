@@ -10,8 +10,7 @@ int main() {
 
     // main loop
     std::string line;
-    while (std::cout << "tp> " && std::getline(std::cin, line) &&
-           !std::cin.eof()) {
+    while (std::cout << "tp> " && std::getline(std::cin, line) && !std::cin.eof()) {
         try {
             driver.parse_string(line, "input");
         } catch (typhon::UnboundVariableException e) {

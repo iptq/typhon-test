@@ -49,8 +49,7 @@ class VariableExpression : public TypedExpression {
 
 class BinaryOperationExpression : public TypedExpression {
   public:
-    BinaryOperationExpression(Expression *_left, enum BINOP _op,
-                              Expression *_right);
+    BinaryOperationExpression(Expression *_left, enum BINOP _op, Expression *_right);
     TypedExpression *evaluate(Context *ctx);
 
     Expression *left;
