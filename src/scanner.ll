@@ -44,6 +44,16 @@ let { return token::T_LET; }
     return token::T_INTEGER;
 }
 
+\'(\\t|\\r|\\n|\\\'|\\\"|\\\\|[^\\])*\' {
+    yylval->cval = yytext[1];
+    return token::T_CHAR;
+}
+
+\"(\\t|\\r|\\n|\\\'|\\\"|\\\\|[^\\])*\" {
+    yylval->sval = new std::string(yytext);
+    return token::T_STRING;
+}
+
 [a-zA-Z_][a-zA-Z0-9_]* {
     yylval->sval = new std::string(yytext);
     return token::T_IDENT;

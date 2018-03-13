@@ -4,14 +4,17 @@
 namespace typhon {
 namespace type {
 
-class Type {};
+class TypeOperator;
+extern TypeOperator Prim_Int32;
 
-enum PRIMITIVES { TYPE_INT32, TYPE_UINT32, TYPE_CHAR, TYPE_BOOL };
+// used for unknown types
+class TypeVariable {};
 
-class PrimitiveType : public Type {
+// combine multiple tyeps
+class TypeOperator {
   public:
-    PrimitiveType(enum PRIMITIVES _name) : name(_name) {}
-    enum PRIMITIVES name;
+    TypeOperator(std::string name);
+    std::string name;
 };
 
 } // namespace type

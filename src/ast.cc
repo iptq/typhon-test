@@ -8,7 +8,7 @@ namespace ast {
 TypedExpression *TypedExpression::evaluate(Context *ctx) { return static_cast<TypedExpression *>(this); }
 
 IntegerLiteralExpression::IntegerLiteralExpression(int _n) {
-    type = new type::PrimitiveType(type::TYPE_INT32);
+    type = &type::Prim_Int32;
     n = _n;
 }
 
@@ -24,17 +24,22 @@ BinaryOperationExpression::BinaryOperationExpression(Expression *_left, enum BIN
     right = _right;
 }
 
-TypedExpression *BinaryOperationExpression::evaluate(Context *ctx) {
+TypedExpression *BinaryOperationExpression::typecheck(Context *ctx) {
     TypedExpression *t_left = left->typecheck(ctx)->evaluate(ctx), *t_right = right->typecheck(ctx)->evaluate(ctx);
-    IntegerLiteralExpression *i_left, *i_right;
-    switch (op) {
-    case O_PLUS:
-        i_left = static_cast<IntegerLiteralExpression *>(t_left), i_right = static_cast<IntegerLiteralExpression *>(t_right);
-        return new IntegerLiteralExpression(i_left->n + i_right->n);
-    default:
-        return new IntegerLiteralExpression(-1);
-    }
+    return t_left;
 }
+
+// TypedExpression *BinaryOperationExpression::evaluate(Context *ctx) {
+//     TypedExpression *t_left = left->typecheck(ctx)->evaluate(ctx), *t_right = right->typecheck(ctx)->evaluate(ctx);
+//     IntegerLiteralExpression *i_left, *i_right;
+//     switch (op) {
+//     case O_PLUS:
+//         i_left = static_cast<IntegerLiteralExpression *>(t_left), i_right = static_cast<IntegerLiteralExpression *>(t_right);
+//         return new IntegerLiteralExpression(i_left->n + i_right->n);
+//     default:
+//         return new IntegerLiteralExpression(-1);
+//     }
+// }
 
 AssignStatement::AssignStatement(std::string _name, Expression *_expr) {
     // TODO: figure out type of expr here

@@ -24,8 +24,8 @@
 %error-verbose
 
 %union {
+    int             ival;
     char            cval;
-    int  			ival;
     double 			fval;
     std::string*	sval;
 
@@ -35,7 +35,8 @@
 }
 
 %token<ival> T_INTEGER
-%token<sval> T_IDENT
+%token<cval> T_CHAR
+%token<sval> T_IDENT T_STRING
 %token T_NEWLINE
 %token T_EOF 0
 

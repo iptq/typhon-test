@@ -21,7 +21,7 @@ class TypedExpression;
 
 class Expression {
   public:
-    virtual TypedExpression *typecheck(Context *ctx){};
+    virtual TypedExpression *typecheck(Context *ctx) = 0;
     virtual std::string to_string() { return "unevaluated expr"; }
 };
 
@@ -29,7 +29,7 @@ class TypedExpression : public Expression {
   public:
     virtual TypedExpression *typecheck(Context *ctx) { return this; }
     virtual TypedExpression *evaluate(Context *ctx);
-    type::Type *type;
+    type::TypeOperator *type;
 };
 
 class LiteralExpression : public TypedExpression {};
@@ -50,10 +50,10 @@ class VariableExpression : public TypedExpression {
     std::string name;
 };
 
-class BinaryOperationExpression : public TypedExpression {
+class BinaryOperationExpression : public Expression {
   public:
     BinaryOperationExpression(Expression *_left, enum BINOP _op, Expression *_right);
-    TypedExpression *evaluate(Context *ctx);
+    virtual TypedExpression *typecheck(Context *ctx);
 
     Expression *left;
     enum BINOP op;
