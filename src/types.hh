@@ -1,19 +1,18 @@
 #ifndef SRC_TYPES_H_
 #define SRC_TYPES_H_
 
+#include <string>
+
 namespace typhon {
 namespace type {
-
-class TypeOperator;
-extern TypeOperator Prim_Int32;
 
 // used for unknown types
 class TypeVariable {};
 
 // combine multiple tyeps
-class TypeOperator {
+class Type {
   public:
-    TypeOperator(std::string name);
+    Type(std::string name);
     std::string name;
 };
 

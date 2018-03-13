@@ -29,7 +29,7 @@ class TypedExpression : public Expression {
   public:
     virtual TypedExpression *typecheck(Context *ctx) { return this; }
     virtual TypedExpression *evaluate(Context *ctx);
-    type::TypeOperator *type;
+    type::Type *type;
 };
 
 class LiteralExpression : public TypedExpression {};

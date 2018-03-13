@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "ast.hh"
+#include "builtins.hh"
 
 namespace typhon {
 namespace ast {
@@ -8,7 +9,7 @@ namespace ast {
 TypedExpression *TypedExpression::evaluate(Context *ctx) { return static_cast<TypedExpression *>(this); }
 
 IntegerLiteralExpression::IntegerLiteralExpression(int _n) {
-    type = &type::Prim_Int32;
+    type = &Prim_Int32;
     n = _n;
 }
 
