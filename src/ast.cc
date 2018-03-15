@@ -20,28 +20,24 @@ type::Type *VariableExpression::type(Context *ctx) { return ctx->type(name); }
 
 TypedExpression *VariableExpression::evaluate(Context *ctx) { return ctx->load(name); }
 
-BinaryOperationExpression::BinaryOperationExpression(Expression *_left, enum BINOP _op, Expression *_right) {
-    left = _left;
-    op = _op;
-    right = _right;
-}
+BinaryOperationExpression::BinaryOperationExpression(Expression *_left, enum BINOP _op, Expression *_right) : left(_left), op(_op), right(_right) {}
 
 TypedExpression *BinaryOperationExpression::typecheck(Context *ctx) {
-    TypedExpression *t_left = left->typecheck(ctx)->evaluate(ctx), *t_right = right->typecheck(ctx)->evaluate(ctx);
+    TypedExpression *t_left = left->typecheck(ctx), *t_right = right->typecheck(ctx);
+
+    // hardcode this for now
+    if (op == O_PLUS) {
+        if (!(t_left->type(ctx) == &Prim_Int32 && t_right->type(ctx) == &Prim_Int32))
+            throw new TypeError();
+        return new TypedBinaryOperationExpression(&Prim_Int32, t_left, op, t_right);
+    }
     return t_left;
 }
 
-// TypedExpression *BinaryOperationExpression::evaluate(Context *ctx) {
-//     TypedExpression *t_left = left->typecheck(ctx)->evaluate(ctx), *t_right = right->typecheck(ctx)->evaluate(ctx);
-//     IntegerLiteralExpression *i_left, *i_right;
-//     switch (op) {
-//     case O_PLUS:
-//         i_left = static_cast<IntegerLiteralExpression *>(t_left), i_right = static_cast<IntegerLiteralExpression *>(t_right);
-//         return new IntegerLiteralExpression(i_left->n + i_right->n);
-//     default:
-//         return new IntegerLiteralExpression(-1);
-//     }
-// }
+TypedBinaryOperationExpression::TypedBinaryOperationExpression(type::Type *type, Expression *_left, enum BINOP _op, Expression *_right)
+    : BinaryOperationExpression(_left, _op, _right), _type(type) {}
+
+type::Type *TypedBinaryOperationExpression::type(Context *ctx) { return _type; }
 
 AssignStatement::AssignStatement(std::string _name, Expression *_expr) {
     // TODO: figure out type of expr here

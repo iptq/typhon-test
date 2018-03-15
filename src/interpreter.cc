@@ -13,8 +13,10 @@ int main() {
     while (std::cout << "tp> " && std::getline(std::cin, line) && !std::cin.eof()) {
         try {
             driver.parse_string(line, "input");
-        } catch (typhon::UnboundVariableException e) {
-            std::cout << "[!] Error: Unbound variable." << std::endl;
+        } catch (typhon::TypeError e) {
+            std::cout << "[!] TypeError: TODO" << std::endl;
+        } catch (typhon::UnboundVariableError e) {
+            std::cout << "[!] UnboundVariableError: TODO" << std::endl;
         }
     }
 }

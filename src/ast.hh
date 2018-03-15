@@ -62,6 +62,14 @@ class BinaryOperationExpression : public Expression {
     Expression *right;
 };
 
+class TypedBinaryOperationExpression : public BinaryOperationExpression, public TypedExpression {
+  public:
+    TypedBinaryOperationExpression(type::Type *type, Expression *_left, enum BINOP _op, Expression *_right);
+    type::Type *type(Context *ctx);
+
+    type::Type *_type;
+};
+
 class Statement {
   public:
     virtual void evaluate(Context *ctx) {}

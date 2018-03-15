@@ -5,7 +5,9 @@
 
 namespace typhon {
 
-struct UnboundVariableException : public std::exception {};
+struct UnboundVariableError : public std::exception {};
+
+struct TypeError : public std::exception {};
 
 } // namespace typhon
 

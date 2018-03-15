@@ -16,7 +16,7 @@ void Context::store(std::string key, ast::TypedExpression *expr) {
 ast::TypedExpression *Context::load(std::string key) {
     auto it = globals.find(key);
     if (it == globals.end())
-        throw UnboundVariableException();
+        throw UnboundVariableError();
     return it->second;
 }
 

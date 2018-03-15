@@ -5,8 +5,8 @@
 
 namespace typhon {
 
-extern type::Type Prim_Char;
-extern type::Type Prim_Int32;
+extern type::PrimitiveType Prim_Char;
+extern type::PrimitiveType Prim_Int32;
 
 }; // namespace typhon
 
