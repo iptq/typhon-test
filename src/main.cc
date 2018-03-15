@@ -5,6 +5,7 @@
 #include "exceptions.hh"
 
 int main() {
+#ifdef INTERPRETER
     typhon::Context ctx;
     typhon::Driver driver(ctx);
 
@@ -19,4 +20,5 @@ int main() {
             std::cout << "[!] UnboundVariableError: TODO" << std::endl;
         }
     }
+#endif
 }

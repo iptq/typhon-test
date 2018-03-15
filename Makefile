@@ -5,18 +5,32 @@ YACC := bison -y
 SRCDIR := src
 BINDIR := bin
 BUILDDIR := build
-TARGET := $(BINDIR)/tci
+
+TC := $(BINDIR)/tc
+TCI := $(BINDIR)/tci
 
 SRCEXT := cc
-SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
+SOURCES := $(shell find $(SRCDIR) -type f -name '*.$(SRCEXT)' ! -name 'main.cc')
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -std=c++14 -static -g -Wall
 
-all: $(TARGET)
+all: $(TC) $(TCI)
 
-$(TARGET): $(BUILDDIR)/parser.o $(BUILDDIR)/scanner.o $(OBJECTS)
+$(TC): $(BUILDDIR)/parser.o $(BUILDDIR)/scanner.o $(OBJECTS) $(BUILDDIR)/compiler.o
 	@mkdir -p $(BINDIR)
-	$(CC) $^ -o $(TARGET) $(LIB)
+	$(CC) $^ -o $@ $(LIB)
+
+$(TCI): $(BUILDDIR)/parser.o $(BUILDDIR)/scanner.o $(OBJECTS) $(BUILDDIR)/interpreter.o
+	@mkdir -p $(BINDIR)
+	$(CC) $^ -o $@ $(LIB)
+
+$(BUILDDIR)/interpreter.o: $(SRCDIR)/main.cc
+	@mkdir -p $(BUILDDIR)
+	$(CC) $(CFLAGS) $(INC) -DINTERPRETER -c -o $@ $<
+
+$(BUILDDIR)/compiler.o: $(SRCDIR)/main.cc
+	@mkdir -p $(BUILDDIR)
+	$(CC) $(CFLAGS) $(INC) -DCOMPILER -c -o $@ $<
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
