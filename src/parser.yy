@@ -8,19 +8,27 @@
 
 %}
 
+%code requires {
+    namespace typhon { class Driver; }
+}
+
 %debug
 %defines
-%skeleton "lalr1.cc"
+%output "parser.cc"
+// %skeleton "lalr1.cc"
+// %define "parser_class_name" { Parser }
 %name-prefix "typhon"
-%define "parser_class_name" { Parser }
+
+%define api.pure full
+%define api.push-pull push 
 
 %locations
-%initial-action
-{
-    @$.begin.filename = @$.end.filename = &driver.streamname;
-};
+// %initial-action
+// {
+//     @$.begin.filename = @$.end.filename = &driver.streamname;
+// };
 
-%parse-param { class Driver& driver }
+%parse-param { typhon::Driver* driver }
 %error-verbose
 
 %union {
@@ -61,7 +69,9 @@
 #include "scanner.hh"
 
 #undef yylex
-#define yylex driver.lexer->lex
+#define yylex driver->lexer->lex
+
+int typhonerror(YYLTYPE *location, typhon::Driver* driver, std::string line);
 
 %}
 
@@ -95,19 +105,18 @@ simple_stmt: assign_stmt { $$ = $1; }
 stmt: simple_stmt { $$ = $1; }
     | funcdef_stmt { $$ = $1; }
 ;
-stmts: stmts_
-;
 stmts_: /* empty */ | stmt stmts_ T_NEWLINE
 ;
 
-suite: simple_stmt | T_NEWLINE T_INDENT stmts T_DEDENT
+suite: simple_stmt | T_NEWLINE T_INDENT stmts_ T_DEDENT
 ;
 start: /* empty */
-    | expr T_EOF { driver.show($1->typecheck(&driver.ctx)->evaluate(&driver.ctx)); }
-    | stmt T_EOF { $1->evaluate(&driver.ctx); }
+    | expr T_EOF { driver->show($1->typecheck(&driver->ctx)->evaluate(&driver->ctx)); }
+    | stmt T_EOF { $1->evaluate(&driver->ctx); }
 
 %%
 
-void typhon::Parser::error(const Parser::location_type& l, const std::string& m) {
-    driver.error(l, m);
+int typhonerror(YYLTYPE *location, typhon::Driver* driver, std::string line) {
+    std::cerr << "Error: " << line << std::endl;
+    return 0;
 }

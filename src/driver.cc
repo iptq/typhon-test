@@ -4,6 +4,7 @@
 
 #include "ast.hh"
 #include "driver.hh"
+#include "parser.hh"
 #include "scanner.hh"
 #include "types.hh"
 
@@ -25,9 +26,19 @@ bool Driver::parse_stream(std::istream &in, const std::string &sname) {
     scanner.set_debug(trace_scanning);
     this->lexer = &scanner;
 
-    Parser parser(*this);
-    parser.set_debug_level(trace_parsing);
-    return (parser.parse() == 0);
+    // Parser parser(*this);
+    // parser.set_debug_level(trace_parsing);
+    // return (parser.parse() == 0);
+    typhonpstate *state = typhonpstate_new();
+    int status;
+    YYSTYPE semantic_value;
+    YYLTYPE location_value;
+    Driver *self = this;
+    do {
+        status = typhonpush_parse(state, lexer->lex(&semantic_value, &location_value), &semantic_value, &location_value, self);
+    } while (status == YYPUSH_MORE);
+    typhonpstate_delete(state);
+    return true;
 }
 
 bool Driver::parse_file(const std::string &filename) {
@@ -42,7 +53,7 @@ bool Driver::parse_string(const std::string &input, const std::string &sname) {
     return parse_stream(iss, sname);
 }
 
-void Driver::error(const class location &l, const std::string &m) { std::cerr << l << ": " << m << std::endl; }
+// void Driver::error(const class location &l, const std::string &m) { std::cerr << l << ": " << m << std::endl; }
 
 void Driver::error(const std::string &m) { std::cerr << m << std::endl; }
 

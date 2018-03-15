@@ -4,7 +4,7 @@
 #define SRC_SCANNER_H_
 
 #ifndef YY_DECL
-#define YY_DECL typhon::Parser::token_type typhon::Scanner::lex(typhon::Parser::semantic_type *yylval, typhon::Parser::location_type *yylloc)
+#define YY_DECL int typhon::Scanner::lex(YYSTYPE *yylval, YYLTYPE *yylloc)
 #endif
 
 #ifndef __FLEX_LEXER_H
@@ -13,7 +13,10 @@
 #undef yyFlexLexer
 #endif
 
+#include <string>
+
 #include "ast.hh"
+#include "common.hh"
 #include "parser.hh"
 
 namespace typhon {
@@ -23,8 +26,15 @@ class Scanner : public TyphonFlexLexer {
     Scanner(std::istream *arg_yyin = 0, std::ostream *arg_yyout = 0);
 
     virtual ~Scanner();
-    virtual Parser::token_type lex(Parser::semantic_type *yylval, Parser::location_type *yylloc);
+    virtual int lex(YYSTYPE *yylval, YYLTYPE *yylloc);
+    void process_indent(std::string line);
+    unsigned int white_count(std::string line);
     void set_debug(bool b);
+
+    unsigned int indents[MAX_DEPTH];
+    unsigned int level;
+    unsigned int first;
+    bool nesting;
 };
 
 } // namespace typhon

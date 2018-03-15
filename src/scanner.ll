@@ -1,13 +1,14 @@
 %{
 
+#include <deque>
 #include <string>
 
 #include "scanner.hh"
 
-typedef typhon::Parser::token token;
-typedef typhon::Parser::token_type token_type;
+// typedef typhon::Scanner::token token;
+// typedef typhon::Scanner::token_type token_type;
 
-#define yyterminate() return token::T_EOF
+#define yyterminate() process_indent(""); return T_EOF
 #define YY_NO_UNISTD_H
 
 %}
@@ -16,57 +17,85 @@ typedef typhon::Parser::token_type token_type;
 %option prefix="Typhon"
 %option batch
 %option debug
-%option yywrap nounput
+%option noyywrap unput
 %option stack
 
 %{
-#define YY_USER_ACTION  yylloc->columns(yyleng);
+#define YY_USER_ACTION  // yylloc->columns(yyleng);
 %}
 
 %%
 
 %{
-    yylloc->step();
+    // yylloc->step();
 %}
 
-\= { return token::T_EQUALS; }
-\: { return token::T_COLON; }
-\( { return token::T_LPAREN; }
-\) { return token::T_RPAREN; }
+^[ ]*\n { /* ignore blank lines */ }
+^[ ]*[^ \n]+ {
+    int last = yyleng - 1;
+    process_indent(std::string(yytext));
+    while ((last >= 0) && (yytext[last] != ' '))
+        unput(yytext[last--]);
+}
 
-\+ { yylval->binop = ast::O_PLUS; return token::T_BINOP; }
+\r | \n {}
 
-def { return token::T_DEF; }
-let { return token::T_LET; }
+\= { return T_EQUALS; }
+\: { return T_COLON; }
+\( { return T_LPAREN; }
+\) { return T_RPAREN; }
+
+\+ { yylval->binop = ast::O_PLUS; return T_BINOP; }
+
+def { return T_DEF; }
+let { return T_LET; }
 
 [0-9]+ {
     yylval->ival = atoi(yytext);
-    return token::T_INTEGER;
+    return T_INTEGER;
 }
 
 \'(\\t|\\r|\\n|\\\'|\\\"|\\\\|[^\\])*\' {
     yylval->cval = yytext[1];
-    return token::T_CHAR;
+    return T_CHAR;
 }
 
 \"(\\t|\\r|\\n|\\\'|\\\"|\\\\|[^\\])*\" {
     yylval->sval = new std::string(yytext);
-    return token::T_STRING;
+    return T_STRING;
 }
 
 [a-zA-Z_][a-zA-Z0-9_]* {
     yylval->sval = new std::string(yytext);
-    return token::T_IDENT;
+    return T_IDENT;
 }
 
 %%
 
 namespace typhon {
 
-Scanner::Scanner(std::istream* in, std::ostream* out) : TyphonFlexLexer(in, out) {
+Scanner::Scanner(std::istream* in, std::ostream* out) : TyphonFlexLexer(in, out), level(0), first(1), nesting(false) {
+    indents[level] = 0;
 }
 
 Scanner::~Scanner() {
+}
+
+unsigned int Scanner::white_count(std::string line) {
+    unsigned int count = 0;
+    for (auto it = line.begin(); it != line.end() and *it == ' '; ++it)
+        ++count;
+    return count;
+}
+
+void Scanner::process_indent(std::string line) {
+    if (nesting)
+        return;
+    
+    unsigned int indent = white_count(line);
+    if (indent == indents[level]) {
+        
+    }
 }
 
 void Scanner::set_debug(bool b) {
@@ -82,8 +111,4 @@ void Scanner::set_debug(bool b) {
 int TyphonFlexLexer::yylex() {
     std::cerr << "in TyphonFlexLexer::yylex() !" << std::endl;
     return 0;
-}
-
-int TyphonFlexLexer::yywrap() {
-    return 1;
 }
