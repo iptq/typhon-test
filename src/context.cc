@@ -20,4 +20,6 @@ ast::TypedExpression *Context::load(std::string key) {
     return it->second;
 }
 
+type::Type *Context::type(std::string key) { return load(key)->type(this); }
+
 } // namespace typhon

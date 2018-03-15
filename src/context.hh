@@ -3,6 +3,8 @@
 
 #include <map>
 
+#include "types.hh"
+
 namespace typhon {
 
 namespace ast {
@@ -13,6 +15,7 @@ class Context {
   public:
     void store(std::string key, ast::TypedExpression *value);
     ast::TypedExpression *load(std::string key);
+    type::Type *type(std::string key);
 
     std::map<std::string, ast::TypedExpression *> globals;
 };

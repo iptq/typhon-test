@@ -8,14 +8,15 @@ namespace ast {
 
 TypedExpression *TypedExpression::evaluate(Context *ctx) { return static_cast<TypedExpression *>(this); }
 
-IntegerLiteralExpression::IntegerLiteralExpression(int _n) {
-    type = &Prim_Int32;
-    n = _n;
-}
+IntegerLiteralExpression::IntegerLiteralExpression(int _n) { n = _n; }
+
+type::Type *IntegerLiteralExpression::type(Context *ctx) { return &Prim_Int32; }
 
 TypedExpression *IntegerLiteralExpression::evaluate(Context *ctx) { return this; }
 
 VariableExpression::VariableExpression(std::string _name) { name = _name; }
+
+type::Type *VariableExpression::type(Context *ctx) { return ctx->type(name); }
 
 TypedExpression *VariableExpression::evaluate(Context *ctx) { return ctx->load(name); }
 

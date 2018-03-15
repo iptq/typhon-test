@@ -29,7 +29,7 @@ class TypedExpression : public Expression {
   public:
     virtual TypedExpression *typecheck(Context *ctx) { return this; }
     virtual TypedExpression *evaluate(Context *ctx);
-    type::Type *type;
+    virtual type::Type *type(Context *ctx) = 0;
 };
 
 class LiteralExpression : public TypedExpression {};
@@ -41,6 +41,7 @@ class IntegerLiteralExpression : public LiteralExpression {
     std::string to_string() { return std::to_string(n); }
 
     int n;
+    type::Type *type(Context *ctx);
 };
 
 class VariableExpression : public TypedExpression {
@@ -48,6 +49,7 @@ class VariableExpression : public TypedExpression {
     VariableExpression(std::string _name);
     TypedExpression *evaluate(Context *ctx);
     std::string name;
+    type::Type *type(Context *ctx);
 };
 
 class BinaryOperationExpression : public Expression {

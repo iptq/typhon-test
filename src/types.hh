@@ -13,6 +13,7 @@ class TypeVariable {};
 class Type {
   public:
     Type(std::string name);
+    virtual std::string to_string();
     std::string name;
 };
 
