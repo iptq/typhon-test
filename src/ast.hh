@@ -37,11 +37,19 @@ class LiteralExpression : public TypedExpression {};
 class IntegerLiteralExpression : public LiteralExpression {
   public:
     IntegerLiteralExpression(int _n);
-    TypedExpression *evaluate(Context *ctx);
+    type::Type *type(Context *ctx);
     std::string to_string() { return std::to_string(n); }
 
     int n;
+};
+
+class CharacterLiteralExpression : public LiteralExpression {
+  public:
+    CharacterLiteralExpression(char _c);
     type::Type *type(Context *ctx);
+    std::string to_string() { return "'" + std::to_string(c) + "'"; }
+
+    char c;
 };
 
 class VariableExpression : public TypedExpression {
@@ -64,9 +72,13 @@ class BinaryOperationExpression : public Expression {
 
 class TypedBinaryOperationExpression : public BinaryOperationExpression, public TypedExpression {
   public:
-    TypedBinaryOperationExpression(type::Type *type, Expression *_left, enum BINOP _op, Expression *_right);
+    TypedBinaryOperationExpression(type::Type *type, TypedExpression *_left, enum BINOP _op, TypedExpression *_right);
+    TypedExpression *evaluate(Context *ctx);
     type::Type *type(Context *ctx);
 
+    TypedExpression *left;
+    enum BINOP op;
+    TypedExpression *right;
     type::Type *_type;
 };
 

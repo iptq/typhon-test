@@ -68,6 +68,7 @@
 %%
 
 literal: T_INTEGER { $$ = new typhon::ast::IntegerLiteralExpression($1); }
+    | T_CHAR { $$ = new typhon::ast::CharacterLiteralExpression($1); }
 ;
 variable: T_IDENT { $$ = new typhon::ast::VariableExpression(*$1); }
 ;
@@ -96,7 +97,7 @@ stmts_: /* empty */ | stmt stmts_ T_NEWLINE
 suite: simple_stmt | T_NEWLINE T_INDENT stmts T_DEDENT
 ;
 start: /* empty */
-    | expr T_EOF { driver.show($1); }
+    | expr T_EOF { driver.show($1->typecheck(&driver.ctx)->evaluate(&driver.ctx)); }
     | stmt T_EOF { $1->evaluate(&driver.ctx); }
 
 %%

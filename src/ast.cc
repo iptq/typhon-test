@@ -6,15 +6,17 @@
 namespace typhon {
 namespace ast {
 
-TypedExpression *TypedExpression::evaluate(Context *ctx) { return static_cast<TypedExpression *>(this); }
+TypedExpression *TypedExpression::evaluate(Context *ctx) { return this; }
 
-IntegerLiteralExpression::IntegerLiteralExpression(int _n) { n = _n; }
+IntegerLiteralExpression::IntegerLiteralExpression(int _n) : n(_n) {}
 
 type::Type *IntegerLiteralExpression::type(Context *ctx) { return &Prim_Int32; }
 
-TypedExpression *IntegerLiteralExpression::evaluate(Context *ctx) { return this; }
+CharacterLiteralExpression::CharacterLiteralExpression(char _c) : c(_c) {}
 
-VariableExpression::VariableExpression(std::string _name) { name = _name; }
+type::Type *CharacterLiteralExpression::type(Context *ctx) { return &Prim_Char; }
+
+VariableExpression::VariableExpression(std::string _name) : name(_name) {}
 
 type::Type *VariableExpression::type(Context *ctx) { return ctx->type(name); }
 
@@ -28,16 +30,27 @@ TypedExpression *BinaryOperationExpression::typecheck(Context *ctx) {
     // hardcode this for now
     if (op == O_PLUS) {
         if (!(t_left->type(ctx) == &Prim_Int32 && t_right->type(ctx) == &Prim_Int32))
-            throw new TypeError();
-        return new TypedBinaryOperationExpression(&Prim_Int32, t_left, op, t_right);
+            throw TypeError();
+        return new TypedBinaryOperationExpression(&Prim_Int32, t_left->typecheck(ctx), op, t_right->typecheck(ctx));
     }
     return t_left;
 }
 
-TypedBinaryOperationExpression::TypedBinaryOperationExpression(type::Type *type, Expression *_left, enum BINOP _op, Expression *_right)
-    : BinaryOperationExpression(_left, _op, _right), _type(type) {}
+TypedBinaryOperationExpression::TypedBinaryOperationExpression(type::Type *type, TypedExpression *_left, enum BINOP _op, TypedExpression *_right)
+    : BinaryOperationExpression(_left, _op, _right), left(_left), op(_op), right(_right), _type(type) {}
 
 type::Type *TypedBinaryOperationExpression::type(Context *ctx) { return _type; }
+
+TypedExpression *TypedBinaryOperationExpression::evaluate(Context *ctx) {
+    // hardcode this for now
+    if (op == O_PLUS) {
+        if (!(left->type(ctx) == &Prim_Int32 && right->type(ctx) == &Prim_Int32))
+            throw TypeError();
+        return new IntegerLiteralExpression(static_cast<IntegerLiteralExpression *>(left->evaluate(ctx))->n +
+                                            static_cast<IntegerLiteralExpression *>(right->evaluate(ctx))->n);
+    }
+    return this;
+}
 
 AssignStatement::AssignStatement(std::string _name, Expression *_expr) {
     // TODO: figure out type of expr here
