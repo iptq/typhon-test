@@ -50,8 +50,8 @@
 %token<binop> T_BINOP
 
 // type
-%type<exprval> expr literal variable
-%type<stmtval> stmt simple_stmt assign_stmt reassign_stmt funcdef_stmt
+%type<exprval> expr literal variable funcapp
+%type<stmtval> stmt expr_stmt simple_stmt assign_stmt reassign_stmt funcdef_stmt
 
 %start start
 
@@ -72,8 +72,11 @@ literal: T_INTEGER { $$ = new typhon::ast::IntegerLiteralExpression($1); }
 ;
 variable: T_IDENT { $$ = new typhon::ast::VariableExpression(*$1); }
 ;
+funcapp: T_IDENT T_LPAREN T_RPAREN { $$ = new typhon::ast::IntegerLiteralExpression(1); }
+;
 expr: literal { $$ = $1; }
     | variable { $$ = $1; }
+    | funcapp { $$ = $1; }
     | expr T_BINOP expr { $$ = new typhon::ast::BinaryOperationExpression($1, $2, $3); }
 ;
 
@@ -81,10 +84,13 @@ assign_stmt: T_LET T_IDENT T_EQUALS expr { $$ = new typhon::ast::AssignStatement
 ;
 reassign_stmt: T_IDENT T_EQUALS expr { $$ = new typhon::ast::ReassignStatement(); }
 ;
-funcdef_stmt: T_DEF T_IDENT T_COLON suite { $$ = new typhon::ast::FuncDefStatement(*$2); }
+expr_stmt: expr { $$ = new typhon::ast::ExpressionStatement($1); }
+;
+funcdef_stmt: T_DEF T_IDENT T_LPAREN T_RPAREN T_COLON suite { $$ = new typhon::ast::FuncDefStatement(*$2); }
 ;
 simple_stmt: assign_stmt { $$ = $1; }
     | reassign_stmt { $$ = $1; }
+    | expr_stmt { $$ = $1; }
 ;
 stmt: simple_stmt { $$ = $1; }
     | funcdef_stmt { $$ = $1; }
