@@ -111,8 +111,8 @@ stmts_: /* empty */ | stmt stmts_ T_NEWLINE
 suite: simple_stmt | T_NEWLINE T_INDENT stmts_ T_DEDENT
 ;
 start: /* empty */
-    | expr T_EOF { driver->show($1->typecheck(&driver->ctx)->evaluate(&driver->ctx)); }
-    | stmt T_EOF { $1->evaluate(&driver->ctx); }
+    | expr T_EOF { driver->expr($1); }
+    | stmt T_EOF { driver->stmt($1); }
 
 %%
 
