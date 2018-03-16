@@ -39,7 +39,7 @@
 
     typhon::ast::BINOP binop;
     typhon::ast::Statement* stmtval;
-    typhon::ast::Statements* stmts;
+    typhon::ast::Block* block;
     typhon::ast::Expression* exprval;
 }
 
@@ -61,7 +61,7 @@
 // type
 %type<exprval> expr literal variable funcapp
 %type<stmtval> stmt expr_stmt simple_stmt assign_stmt reassign_stmt funcdef_stmt
-%type<stmts> stmts
+%type<block> stmts
 
 %start start
 
@@ -108,14 +108,14 @@ stmt: simple_stmt { $$ = $1; }
     | funcdef_stmt { $$ = $1; }
 ;
 
-stmts: /* empty */ { $$ = new typhon::ast::Statements(); }
+stmts: /* empty */ { $$ = new typhon::ast::Block(); }
     | stmts stmt newlines { $1->statements.push_back($2); $$ = $1; }
 ;
 newlines: /* empty */ | T_NEWLINE newlines ;
 eof: newlines T_EOF ;
 
 suite: simple_stmt | newlines T_INDENT stmts T_DEDENT ;
-start: stmts { driver->stmts($1); }
+start: stmts { driver->block($1); }
     | expr eof { driver->expr($1); }
 
 %%

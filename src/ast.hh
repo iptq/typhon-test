@@ -88,9 +88,9 @@ class Statement {
     virtual void evaluate(Context *ctx) {}
 };
 
-class Statements {
+class Block {
   public:
-    Statements() : statements() {}
+    Block() : statements() {}
     std::vector<Statement *> statements;
 };
 
@@ -113,7 +113,6 @@ class ReassignStatement : public Statement {
 class ExpressionStatement : public Statement {
   public:
     ExpressionStatement(Expression *_expr);
-    virtual ~ExpressionStatement();
     void evaluate(Context *ctx);
 
     Expression *expr;
@@ -122,7 +121,6 @@ class ExpressionStatement : public Statement {
 class FuncDefStatement : public Statement {
   public:
     FuncDefStatement(std::string _name);
-    virtual ~FuncDefStatement();
     void evaluate(Context *ctx);
 
     std::string name;

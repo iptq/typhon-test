@@ -21,9 +21,9 @@ void Driver::expr(ast::Expression *expr) {
 
 void Driver::stmt(ast::Statement *stmt) { stmt->evaluate(&ctx); }
 
-void Driver::stmts(ast::Statements *stmts) {
+void Driver::block(ast::Block *block) {
     // TODO
-    std::cout << "received " << stmts->statements.size() << " statement(s)" << std::endl;
+    std::cout << "received " << block->statements.size() << " statement(s)" << std::endl;
 }
 
 bool Driver::parse_stream(std::istream &in, const std::string &sname) {

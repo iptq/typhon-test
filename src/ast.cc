@@ -73,13 +73,9 @@ ExpressionStatement::ExpressionStatement(Expression *_expr) : expr(_expr) {}
 
 void ExpressionStatement::evaluate(Context *ctx) { std::cout << "expression" << std::endl; }
 
-ExpressionStatement::~ExpressionStatement() {}
-
 FuncDefStatement::FuncDefStatement(std::string _name) : name(_name) {}
 
 void FuncDefStatement::evaluate(Context *ctx) { std::cout << "statement:" << name << std::endl; }
-
-FuncDefStatement::~FuncDefStatement() {}
 
 } // namespace ast
 } // namespace typhon

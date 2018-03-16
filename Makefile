@@ -12,13 +12,16 @@ TCI := $(BINDIR)/tci
 SRCEXT := cc
 SOURCES := $(shell find $(SRCDIR) -type f -name '*.$(SRCEXT)' ! -name 'main.cc')
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -std=c++14 -static -g -Wall
+
+INCLUDES :=  `llvm-config --cxxflags` -Wno-unknown-warning-option
+CFLAGS := $(INCLUDES) -fexceptions -std=c++14 -static -g -Wall
+LDFLAGS := `llvm-config --libs core native --ldflags`
 
 all: $(TC) $(TCI)
 
 $(TC): $(BUILDDIR)/parser.o $(BUILDDIR)/scanner.o $(OBJECTS) $(BUILDDIR)/compiler.o
 	@mkdir -p $(BINDIR)
-	$(CC) $^ -o $@ $(LIB)
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIB)
 
 $(TCI): $(BUILDDIR)/parser.o $(BUILDDIR)/scanner.o $(OBJECTS) $(BUILDDIR)/interpreter.o
 	@mkdir -p $(BINDIR)
