@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "ast.hh"
 #include "context.hh"
 #include "driver.hh"
 #include "exceptions.hh"
@@ -20,8 +21,11 @@ int compiler_main(int argc, char **argv) {
         return 1;
     }
 
-    driver.parse_stream(ifile);
-    ifile.close();
+    if (driver.parse_stream(ifile)) {
+        ifile.close(); // close the file first
+        typhon::ast::Block *block = driver.block;
+        typhon::mir::Node *root = block->convert();
+    }
     return 0;
 }
 
@@ -31,7 +35,7 @@ int interpreter_main() {
 
     // main loop
     std::string line;
-    while (std::cout << "tp> " && std::getline(std::cin, line) && !std::cin.eof()) {
+    while (std::cout << "tp> " and std::getline(std::cin, line) and !std::cin.eof()) {
         try {
             driver.parse_string(line, "input");
         } catch (typhon::ParseError e) {

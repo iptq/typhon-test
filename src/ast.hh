@@ -6,6 +6,7 @@
 
 #include "context.hh"
 #include "exceptions.hh"
+#include "mir.hh"
 #include "types.hh"
 
 namespace typhon {
@@ -86,19 +87,20 @@ class TypedBinaryOperationExpression : public BinaryOperationExpression, public 
 class Statement {
   public:
     virtual void evaluate(Context *ctx) {}
+    virtual mir::Node *convert() { return new mir::Node(); }
 };
 
 class Block {
   public:
     Block() : statements() {}
     int size() { return statements.size(); }
+    mir::Node *convert();
     std::vector<Statement *> statements;
 };
 
 class AssignStatement : public Statement {
   public:
     AssignStatement(std::string _name, Expression *_expr);
-    virtual ~AssignStatement();
     void evaluate(Context *ctx);
 
     std::string name;

@@ -26,11 +26,13 @@ void Driver::stmt(ast::Statement *stmt) {
     stmt->evaluate(&ctx);
 }
 
-void Driver::block(ast::Block *block) {
+bool Driver::handle_block(ast::Block *block) {
     // TODO
     if (block->size() == 1)
         stmt(block->statements[0]);
-    std::cout << "received " << block->statements.size() << " statement(s)" << std::endl;
+    // std::cout << "received " << block->statements.size() << " statement(s)" << std::endl;
+    this->block = block;
+    return true;
 }
 
 bool Driver::parse_stream(std::istream &in, const std::string &sname) {
@@ -65,6 +67,6 @@ bool Driver::parse_string(const std::string &input, const std::string &sname) {
 
 // void Driver::error(const class location &l, const std::string &m) { std::cerr << l << ": " << m << std::endl; }
 
-void Driver::error(const std::string &m) { std::cerr << m << std::endl; }
+void Driver::error(const std::string &m) { std::cerr << "error " << m << std::endl; }
 
 } // namespace typhon

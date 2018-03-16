@@ -29,7 +29,7 @@ TypedExpression *BinaryOperationExpression::typecheck(Context *ctx) {
 
     // hardcode this for now
     if (op == O_PLUS) {
-        if (!(t_left->type(ctx) == &Prim_Int32 && t_right->type(ctx) == &Prim_Int32))
+        if (!(t_left->type(ctx) == &Prim_Int32 and t_right->type(ctx) == &Prim_Int32))
             throw TypeError();
         return new TypedBinaryOperationExpression(&Prim_Int32, t_left->typecheck(ctx), op, t_right->typecheck(ctx));
     }
@@ -44,21 +44,17 @@ type::Type *TypedBinaryOperationExpression::type(Context *ctx) { return _type; }
 TypedExpression *TypedBinaryOperationExpression::evaluate(Context *ctx) {
     // hardcode this for now
     if (op == O_PLUS) {
-        if (!(left->type(ctx) == &Prim_Int32 && right->type(ctx) == &Prim_Int32))
+        if (!(left->type(ctx) == &Prim_Int32 and right->type(ctx) == &Prim_Int32))
             throw TypeError();
-        return new IntegerLiteralExpression(static_cast<IntegerLiteralExpression *>(left->evaluate(ctx))->n +
-                                            static_cast<IntegerLiteralExpression *>(right->evaluate(ctx))->n);
+        return new IntegerLiteralExpression(dynamic_cast<IntegerLiteralExpression *>(left->evaluate(ctx))->n +
+                                            dynamic_cast<IntegerLiteralExpression *>(right->evaluate(ctx))->n);
     }
     return this;
 }
 
-AssignStatement::AssignStatement(std::string _name, Expression *_expr) {
-    // TODO: figure out type of expr here
-    name = _name;
-    expr = _expr;
-}
+mir::Node *Block::convert() { return new mir::Node(); }
 
-AssignStatement::~AssignStatement() {}
+AssignStatement::AssignStatement(std::string _name, Expression *_expr) : name(_name), expr(_expr) {}
 
 void AssignStatement::evaluate(Context *ctx) {
     TypedExpression *value = expr->typecheck(ctx)->evaluate(ctx);

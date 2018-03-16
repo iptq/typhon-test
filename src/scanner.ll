@@ -35,7 +35,7 @@
 ^[ ]*[^ \n]+ {
     int last = yyleng - 1;
     process_indent(std::string(yytext));
-    while ((last >= 0) && (yytext[last] != ' '))
+    while ((last >= 0) and (yytext[last] != ' '))
         unput(yytext[last--]);
 }
 

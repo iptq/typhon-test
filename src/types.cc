@@ -8,7 +8,7 @@ namespace type {
 Type::Type(std::string _name) { name = _name; }
 
 bool Type::operator==(const Type *other) {
-    if (static_cast<PrimitiveType *>(this) and static_cast<const PrimitiveType *>(other))
+    if (dynamic_cast<PrimitiveType *>(this) and dynamic_cast<const PrimitiveType *>(other))
         return name == other->name;
     return false;
 }

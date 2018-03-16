@@ -112,10 +112,9 @@ stmts: /* empty */ { $$ = new typhon::ast::Block(); }
     | stmts stmt newlines { $1->statements.push_back($2); $$ = $1; }
 ;
 newlines: /* empty */ | T_NEWLINE newlines ;
-eof: newlines T_EOF ;
 
 suite: simple_stmt | newlines T_INDENT stmts T_DEDENT ;
-start: stmts { driver->block($1); }
+start: stmts { driver->handle_block($1); }
 
 %%
 

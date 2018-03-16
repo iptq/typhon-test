@@ -17,7 +17,7 @@ class Driver {
     std::string streamname;
     void expr(ast::Expression *expr);
     void stmt(ast::Statement *stmt);
-    void block(ast::Block *block);
+    bool handle_block(ast::Block *block);
 
     bool parse_stream(std::istream &in, const std::string &sname = "stream input");
     bool parse_string(const std::string &input, const std::string &sname = "string stream");
@@ -27,6 +27,8 @@ class Driver {
 
     class Scanner *lexer;
     class Context &ctx;
+
+    ast::Block *block; // for storing the result
 };
 
 } // namespace typhon
