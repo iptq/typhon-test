@@ -47,7 +47,7 @@ class CharacterLiteralExpression : public LiteralExpression {
   public:
     CharacterLiteralExpression(char _c);
     type::Type *type(Context *ctx);
-    std::string to_string() { return "'" + std::to_string(c) + "'"; }
+    std::string to_string() { return "'" + std::string(1, c) + "'"; }
 
     char c;
 };
