@@ -18,9 +18,9 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/src/%,$(SOURCES:.$(SRCEXT)=.o))
 LIBSOURCES := $(shell find $(LIBDIR) -type f -name '*.$(SRCEXT)')
 LIBOBJECTS := $(patsubst $(LIBDIR)/%,$(BUILDDIR)/lib/%,$(LIBSOURCES:.$(SRCEXT)=.o))
 
-INCLUDES := `llvm-config --cxxflags` -Wno-unknown-warning-option
+INCLUDES := -I/usr/include `llvm-config --cxxflags` -Wno-unknown-warning-option
 CFLAGS := $(INCLUDES) -fexceptions -O0 -std=c++14 -static -g -Wall
-LDFLAGS := `llvm-config --system-libs --libs --ldflags core native`
+LDFLAGS := -L/usr/lib -lboost_program_options `llvm-config --system-libs --libs --ldflags core native`
 
 all: $(TC) $(TCI) $(TCLIB)
 
@@ -47,7 +47,6 @@ $(BUILDDIR)/src/%.o: $(SRCDIR)/%.$(SRCEXT)
 # lib
 
 $(TCLIB): $(LIBOBJECTS)
-	echo $(LIBOBJECTS)
 	ar rcs $@ $<
 
 $(BUILDDIR)/lib/%.o: $(LIBDIR)/%.$(SRCEXT)
@@ -71,7 +70,7 @@ $(BUILDDIR)/src/parser.o: $(SRCDIR)/parser.cc
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 clean:
-	rm -rf $(BINDIR) $(BUILDDIR) $(SRCDIR)/*.o
+	rm -rf $(BINDIR) $(BUILDDIR)
 	rm -rf \
 		$(SRCDIR)/location.hh $(SRCDIR)/position.hh $(SRCDIR)/stack.hh $(SRCDIR)/FlexLexer.h \
 		$(SRCDIR)/parser.cc $(SRCDIR)/parser.hh \

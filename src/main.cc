@@ -1,3 +1,5 @@
+#include <boost/program_options.hpp>
+
 #include <llvm/Support/Host.h>
 #include <llvm/Support/TargetRegistry.h>
 #include <llvm/Support/TargetSelect.h>
@@ -16,12 +18,46 @@ int compiler_main(int argc, char **argv) {
     typhon::Context ctx;
     typhon::Driver driver(ctx);
 
-    if (argc < 2) {
-        std::cerr << "please provide a file to compile" << std::endl;
+    bool optc = false;
+
+    namespace po = boost::program_options;
+    po::options_description desc("Compiler");
+    desc.add_options()(",c", "Emit object file instead of binary.")("help,h", "Display help message.")("file", po::value<std::string>(),
+                                                                                                       "File to compile.");
+
+    po::positional_options_description pos;
+    pos.add("file", 1);
+
+    // if (argc < 2) {
+    //     std::cerr << "please provide a file to compile" << std::endl;
+    //     return 1;
+    // }
+    po::variables_map vm;
+    try {
+        po::store(po::command_line_parser(argc, argv).options(desc).positional(pos).run(), vm);
+        po::notify(vm);
+        // for (auto it = vm.begin(); it != vm.end(); ++it) {
+        //     std::cout << it->first << ": " << it->second.as<std::string>() << std::endl;
+        // }
+        if (vm.count("help")) {
+            std::cout << desc << std::endl;
+            return 0;
+        }
+        if (vm.count("-c"))
+            optc = true;
+    } catch (std::exception &e) {
+        std::cerr << "Unhandled Exception: " << e.what() << ". application will now exit" << std::endl;
         return 1;
     }
 
-    std::ifstream ifile(argv[1]);
+    if (!vm.count("file")) {
+        std::cerr << "please provide a file to compile" << std::endl;
+        return 1;
+    }
+    // std::cout << "filename: " << vm["file"].as<std::string>() << std::endl;
+    // std::cout << optc << std::endl;
+
+    std::ifstream ifile(vm["file"].as<std::string>());
     if (!ifile.is_open()) {
         std::cerr << "unable to open file" << std::endl;
         return 1;
