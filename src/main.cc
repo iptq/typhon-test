@@ -1,3 +1,9 @@
+#include <llvm/Support/Host.h>
+#include <llvm/Support/TargetRegistry.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/Target/TargetMachine.h>
+#include <llvm/Target/TargetOptions.h>
+
 #include <fstream>
 #include <iostream>
 
@@ -25,6 +31,9 @@ int compiler_main(int argc, char **argv) {
         ifile.close(); // close the file first
         typhon::ast::Block *block = driver.block;
         typhon::mir::Node *root = block->convert();
+
+        // ok start llvm shit
+        auto TargetTriple = llvm::sys::getDefaultTargetTriple();
     }
     return 0;
 }

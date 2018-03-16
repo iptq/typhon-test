@@ -8,7 +8,7 @@ namespace mir {
 
 class Node {
   public:
-    // virtual llvm::Value *codegen() = 0;
+    virtual llvm::Value *codegen() {}
 };
 
 class Constant : public Node {

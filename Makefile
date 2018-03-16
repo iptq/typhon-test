@@ -4,39 +4,54 @@ YACC := bison -y
 
 SRCDIR := src
 BINDIR := bin
+LIBDIR := lib
 BUILDDIR := build
 
 TC := $(BINDIR)/tc
 TCI := $(BINDIR)/tci
+TCLIB := $(BINDIR)/libtyphon.a
 
 SRCEXT := cc
 SOURCES := $(shell find $(SRCDIR) -type f -name '*.$(SRCEXT)' ! -name 'main.cc')
-OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
+OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/src/%,$(SOURCES:.$(SRCEXT)=.o))
 
-INCLUDES :=  `llvm-config --cxxflags` -Wno-unknown-warning-option
+LIBSOURCES := $(shell find $(LIBDIR) -type f -name '*.$(SRCEXT)')
+LIBOBJECTS := $(patsubst $(LIBDIR)/%,$(BUILDDIR)/lib/%,$(LIBSOURCES:.$(SRCEXT)=.o))
+
+INCLUDES := `llvm-config --cxxflags` -Wno-unknown-warning-option
 CFLAGS := $(INCLUDES) -fexceptions -O0 -std=c++14 -static -g -Wall
-LDFLAGS := `llvm-config --libs core native --ldflags`
+LDFLAGS := `llvm-config --system-libs --libs --ldflags core native`
 
-all: $(TC) $(TCI)
+all: $(TC) $(TCI) $(TCLIB)
 
-$(TC): $(BUILDDIR)/parser.o $(BUILDDIR)/scanner.o $(OBJECTS) $(BUILDDIR)/compiler.o
+$(TC): $(BUILDDIR)/src/parser.o $(BUILDDIR)/src/scanner.o $(OBJECTS) $(BUILDDIR)/src/compiler.o
 	@mkdir -p $(BINDIR)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LIB)
 
-$(TCI): $(BUILDDIR)/parser.o $(BUILDDIR)/scanner.o $(OBJECTS) $(BUILDDIR)/interpreter.o
+$(TCI): $(BUILDDIR)/src/parser.o $(BUILDDIR)/src/scanner.o $(OBJECTS) $(BUILDDIR)/src/interpreter.o
 	@mkdir -p $(BINDIR)
-	$(CC) $^ -o $@ $(LIB)
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIB)
 
-$(BUILDDIR)/interpreter.o: $(SRCDIR)/main.cc
-	@mkdir -p $(BUILDDIR)
+$(BUILDDIR)/src/interpreter.o: $(SRCDIR)/main.cc
+	@mkdir -p $(BUILDDIR)/src
 	$(CC) $(CFLAGS) $(INC) -DINTERPRETER -c -o $@ $<
 
-$(BUILDDIR)/compiler.o: $(SRCDIR)/main.cc
-	@mkdir -p $(BUILDDIR)
+$(BUILDDIR)/src/compiler.o: $(SRCDIR)/main.cc
+	@mkdir -p $(BUILDDIR)/src
 	$(CC) $(CFLAGS) $(INC) -DCOMPILER -c -o $@ $<
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-	@mkdir -p $(BUILDDIR)
+$(BUILDDIR)/src/%.o: $(SRCDIR)/%.$(SRCEXT)
+	@mkdir -p $(BUILDDIR)/src
+	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+# lib
+
+$(TCLIB): $(LIBOBJECTS)
+	echo $(LIBOBJECTS)
+	ar rcs $@ $<
+
+$(BUILDDIR)/lib/%.o: $(LIBDIR)/%.$(SRCEXT)
+	@mkdir -p $(BUILDDIR)/lib
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 # pgen
@@ -44,19 +59,19 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 $(SRCDIR)/scanner.cc: $(SRCDIR)/scanner.ll
 	(cd $(SRCDIR); $(LEX) -o scanner.cc scanner.ll)
 
-$(BUILDDIR)/scanner.o: $(SRCDIR)/scanner.cc
-	@mkdir -p $(BUILDDIR)
+$(BUILDDIR)/src/scanner.o: $(SRCDIR)/scanner.cc
+	@mkdir -p $(BUILDDIR)/src
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 $(SRCDIR)/parser.cc: $(SRCDIR)/parser.yy
 	(cd $(SRCDIR); $(YACC) -t -o parser.cc parser.yy)
 
-$(BUILDDIR)/parser.o: $(SRCDIR)/parser.cc
-	@mkdir -p $(BUILDDIR)
+$(BUILDDIR)/src/parser.o: $(SRCDIR)/parser.cc
+	@mkdir -p $(BUILDDIR)/src
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 clean:
-	rm -rf $(BINDIR) $(BUILDDIR)
+	rm -rf $(BINDIR) $(BUILDDIR) $(SRCDIR)/*.o
 	rm -rf \
 		$(SRCDIR)/location.hh $(SRCDIR)/position.hh $(SRCDIR)/stack.hh $(SRCDIR)/FlexLexer.h \
 		$(SRCDIR)/parser.cc $(SRCDIR)/parser.hh \
