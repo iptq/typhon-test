@@ -91,6 +91,7 @@ class Statement {
 class Block {
   public:
     Block() : statements() {}
+    int size() { return statements.size(); }
     std::vector<Statement *> statements;
 };
 

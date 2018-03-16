@@ -14,7 +14,7 @@ SOURCES := $(shell find $(SRCDIR) -type f -name '*.$(SRCEXT)' ! -name 'main.cc')
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 
 INCLUDES :=  `llvm-config --cxxflags` -Wno-unknown-warning-option
-CFLAGS := $(INCLUDES) -fexceptions -std=c++14 -static -g -Wall
+CFLAGS := $(INCLUDES) -fexceptions -O0 -std=c++14 -static -g -Wall
 LDFLAGS := `llvm-config --libs core native --ldflags`
 
 all: $(TC) $(TCI)

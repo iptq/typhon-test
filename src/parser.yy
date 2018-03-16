@@ -116,7 +116,6 @@ eof: newlines T_EOF ;
 
 suite: simple_stmt | newlines T_INDENT stmts T_DEDENT ;
 start: stmts { driver->block($1); }
-    | expr eof { driver->expr($1); }
 
 %%
 

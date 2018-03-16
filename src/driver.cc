@@ -19,10 +19,17 @@ void Driver::expr(ast::Expression *expr) {
     std::cout << type->to_string() << " : " << value->to_string() << std::endl;
 }
 
-void Driver::stmt(ast::Statement *stmt) { stmt->evaluate(&ctx); }
+void Driver::stmt(ast::Statement *stmt) {
+    ast::ExpressionStatement *expr_stmt;
+    if ((expr_stmt = dynamic_cast<ast::ExpressionStatement *>(stmt)))
+        expr(expr_stmt->expr);
+    stmt->evaluate(&ctx);
+}
 
 void Driver::block(ast::Block *block) {
     // TODO
+    if (block->size() == 1)
+        stmt(block->statements[0]);
     std::cout << "received " << block->statements.size() << " statement(s)" << std::endl;
 }
 

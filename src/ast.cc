@@ -71,7 +71,7 @@ ReassignStatement::~ReassignStatement() {}
 
 ExpressionStatement::ExpressionStatement(Expression *_expr) : expr(_expr) {}
 
-void ExpressionStatement::evaluate(Context *ctx) { std::cout << "expression" << std::endl; }
+void ExpressionStatement::evaluate(Context *ctx) {}
 
 FuncDefStatement::FuncDefStatement(std::string _name) : name(_name) {}
 
