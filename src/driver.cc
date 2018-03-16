@@ -10,7 +10,7 @@
 
 namespace typhon {
 
-Driver::Driver(class Context &_ctx) : trace_scanning(false), trace_parsing(false), ctx(_ctx) {}
+Driver::Driver(class Context &_ctx) : trace_scanning(false), trace_parsing(true), ctx(_ctx) {}
 
 void Driver::expr(ast::Expression *expr) {
     ast::TypedExpression *typed_expr = expr->typecheck(&ctx);
@@ -24,22 +24,18 @@ void Driver::stmt(ast::Statement *stmt) { stmt->evaluate(&ctx); }
 bool Driver::parse_stream(std::istream &in, const std::string &sname) {
     streamname = sname;
 
-    Scanner scanner(&in);
-    scanner.set_debug(trace_scanning);
-    this->lexer = &scanner;
+    Scanner *scanner = new Scanner(&in);
+    scanner->set_debug(trace_scanning);
+    this->lexer = scanner;
 
-    // Parser parser(*this);
-    // parser.set_debug_level(trace_parsing);
-    // return (parser.parse() == 0);
-    typhonpstate *state = typhonpstate_new();
-    int status;
-    YYSTYPE semantic_value;
-    YYLTYPE location_value;
-    Driver *self = this;
+    scanner->driver = this; // ref to parent
+    scanner->state = typhonpstate_new();
+    int status, token;
     do {
-        status = typhonpush_parse(state, lexer->lex(&semantic_value, &location_value), &semantic_value, &location_value, self);
+        token = lexer->lex(&scanner->semval, &scanner->locval);
+        status = typhonpush_parse(scanner->state, token, &scanner->semval, &scanner->locval, this);
     } while (status == YYPUSH_MORE);
-    typhonpstate_delete(state);
+    typhonpstate_delete(scanner->state);
     return true;
 }
 

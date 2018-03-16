@@ -34,6 +34,8 @@ int interpreter_main() {
     while (std::cout << "tp> " && std::getline(std::cin, line) && !std::cin.eof()) {
         try {
             driver.parse_string(line, "input");
+        } catch (typhon::ParseError e) {
+            std::cout << "[!] ParseError: TODO" << std::endl;
         } catch (typhon::TypeError e) {
             std::cout << "[!] TypeError: TODO" << std::endl;
         } catch (typhon::UnboundVariableError e) {

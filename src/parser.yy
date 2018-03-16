@@ -105,14 +105,15 @@ simple_stmt: assign_stmt { $$ = $1; }
 stmt: simple_stmt { $$ = $1; }
     | funcdef_stmt { $$ = $1; }
 ;
-stmts_: /* empty */ | stmt stmts_ T_NEWLINE
-;
 
-suite: simple_stmt | T_NEWLINE T_INDENT stmts_ T_DEDENT
-;
+stmts_: /* empty */ | stmt stmts_ newlines ;
+newlines: /* empty */ | T_NEWLINE newlines ;
+eof: newlines T_EOF ;
+
+suite: simple_stmt | newlines T_INDENT stmts_ T_DEDENT ;
 start: /* empty */
-    | expr T_EOF { driver->expr($1); }
-    | stmt T_EOF { driver->stmt($1); }
+    | expr eof { driver->expr($1); }
+    | stmt eof { driver->stmt($1); }
 
 %%
 

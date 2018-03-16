@@ -46,7 +46,7 @@ $(BUILDDIR)/scanner.o: $(SRCDIR)/scanner.cc
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 $(SRCDIR)/parser.cc: $(SRCDIR)/parser.yy
-	(cd $(SRCDIR); $(YACC) -o parser.cc parser.yy)
+	(cd $(SRCDIR); $(YACC) -t -o parser.cc parser.yy)
 
 $(BUILDDIR)/parser.o: $(SRCDIR)/parser.cc
 	@mkdir -p $(BUILDDIR)

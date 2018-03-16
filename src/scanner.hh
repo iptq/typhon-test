@@ -32,9 +32,14 @@ class Scanner : public TyphonFlexLexer {
     void set_debug(bool b);
 
     unsigned int indents[MAX_DEPTH];
-    unsigned int level;
+    int level;
     unsigned int first;
     bool nesting;
+
+    Driver *driver;
+    typhonpstate *state;
+    YYSTYPE semval;
+    YYLTYPE locval;
 };
 
 } // namespace typhon

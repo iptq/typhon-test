@@ -7,6 +7,8 @@ namespace typhon {
 
 struct UnboundVariableError : public std::exception {};
 
+struct ParseError : public std::exception {};
+
 struct TypeError : public std::exception {};
 
 } // namespace typhon
