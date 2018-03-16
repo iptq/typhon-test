@@ -2,6 +2,7 @@
 #define SRC_AST_H_
 
 #include <string>
+#include <vector>
 
 #include "context.hh"
 #include "exceptions.hh"
@@ -85,6 +86,12 @@ class TypedBinaryOperationExpression : public BinaryOperationExpression, public 
 class Statement {
   public:
     virtual void evaluate(Context *ctx) {}
+};
+
+class Statements {
+  public:
+    Statements() : statements() {}
+    std::vector<Statement *> statements;
 };
 
 class AssignStatement : public Statement {

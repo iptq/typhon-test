@@ -17,6 +17,7 @@ class Driver {
     std::string streamname;
     void expr(ast::Expression *expr);
     void stmt(ast::Statement *stmt);
+    void stmts(ast::Statements *stmt);
 
     bool parse_stream(std::istream &in, const std::string &sname = "stream input");
     bool parse_string(const std::string &input, const std::string &sname = "string stream");
