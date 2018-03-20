@@ -1,0 +1,16 @@
+use ast;
+
+grammar;
+
+Stmt: ast::Stmt = {
+    r"1+" => 1,
+};
+
+pub Program: ast::Program = {
+    <Stmt*> => ast::Program {},
+};
+
+extern {
+    type Location = usize;
+    type Error = lexer::LexError;
+}
