@@ -6,6 +6,11 @@ build = "bin/build.rs"
 
 [[bin]]
 doc = false
+name = "tc"
+path = "bin/compiler.rs"
+
+[[bin]]
+doc = false
 name = "tci"
 path = "bin/interpreter.rs"
 
@@ -13,4 +18,7 @@ path = "bin/interpreter.rs"
 lalrpop = "0.14.0"
 
 [dependencies]
+clap = "2.31.2"
+lalrpop-util = "0.14.0"
 linefeed = "0.4"
+regex = "0.2.10"

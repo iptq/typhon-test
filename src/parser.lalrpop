@@ -1,0 +1,23 @@
+use ast::{Expr, Program, Stmt};
+use lexer::{LexError, Token};
+
+grammar;
+
+Stmt: Stmt = {
+    ":" => Stmt::Expr(Expr::IntLiteral(1)),
+};
+
+pub Program: Program = {
+    <Stmt*> => Program {},
+};
+
+extern {
+    type Location = usize;
+    type Error = LexError;
+
+    enum Token {
+        "(" => Token::LeftParen,
+        ")" => Token::RightParen,
+        ":" => Token::Colon,
+    }
+}

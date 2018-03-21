@@ -15,10 +15,14 @@ fn main() {
     reader.set_prompt(">>> ");
 
     while let Ok(ReadResult::Input(line)) = reader.read_line() {
-        if !line.trim().is_empty() {
+        let trimmed = line.trim();
+        if !trimmed.is_empty() {
             reader.add_history(line.clone());
         }
-        let mut lexer = Lexer::new(&line);
-        println!("read: {:?}", lexer.next());
+
+        let mut lexer = Lexer::new(&trimmed);
+        for token in lexer {
+            println!("read: {:?}", token);
+        }
     }
 }
