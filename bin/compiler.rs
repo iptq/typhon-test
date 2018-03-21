@@ -1,14 +1,12 @@
 extern crate clap;
 extern crate typhon;
 
-use std::env;
 use std::fs::File;
 use std::io::prelude::*;
 
 use clap::{App, Arg};
 
 use typhon::lexer::Lexer;
-use typhon::parser::parse_Program;
 
 fn main() {
     let matches = App::new("Typhon")
@@ -30,7 +28,7 @@ fn main() {
 
     let mut contents = String::new();
     f.read_to_string(&mut contents).expect("failed to read");
-    contents += '\n';
+    contents += "\n";
 
     // parsing
     let lexer = Lexer::new(&contents);

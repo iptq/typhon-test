@@ -4,6 +4,7 @@ extern crate typhon;
 use linefeed::{ReadResult, Reader};
 
 use typhon::lexer::Lexer;
+use typhon::parser::parse_Line;
 
 fn main() {
     let mut reader;
@@ -22,7 +23,10 @@ fn main() {
 
         let mut lexer = Lexer::new(&trimmed);
         for token in lexer {
-            println!("read: {:?}", token);
+            println!("token: {:?}", token);
         }
+        let mut lexer = Lexer::new(&trimmed);
+        let stmt = parse_Line(lexer);
+        println!("{:?}", stmt);
     }
 }

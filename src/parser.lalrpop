@@ -1,23 +1,31 @@
 use ast::{Expr, Program, Stmt};
 use lexer::{LexError, Token};
 
-grammar;
+grammar<'input>;
 
 Stmt: Stmt = {
-    ":" => Stmt::Expr(Expr::IntLiteral(1)),
+    <"Colon"> => Stmt::Expr(Expr::IntLiteral(1)),
 };
 
+Stmts: Vec<Stmt> =
+    <v0:(<Stmt> "Newline")*> <e1:Stmt?> => v0.into_iter().chain(e1).collect();
+
+pub Line: Stmt =
+    <s:Stmt> <x:"EOF"?> => s;
+
 pub Program: Program = {
-    <Stmt*> => Program {},
+    <v:Stmts> <x:"EOF"?> => Program {},
 };
 
 extern {
     type Location = usize;
     type Error = LexError;
 
-    enum Token {
+    enum Token<'input> {
         "(" => Token::LeftParen,
         ")" => Token::RightParen,
-        ":" => Token::Colon,
+        "EOF" => Token::EOF,
+        "Newline" => Token::Newline,
+        "Colon" => Token::Symbol(<&'input str>),
     }
 }

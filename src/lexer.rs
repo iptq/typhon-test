@@ -6,7 +6,7 @@ const MAX_DEPTH: usize = 64;
 pub type Spanned<Token, Location, Error> = Result<(Location, Token, Location), Error>;
 
 #[derive(Debug)]
-pub enum Token {
+pub enum Token<'input> {
     // indentation
     Newline,
     Indent,
@@ -19,7 +19,7 @@ pub enum Token {
     Colon,
 
     String,
-    Symbol,
+    Symbol(&'input str),
     Ident,
     Digit,
     Char,
@@ -32,7 +32,7 @@ pub enum LexError {
 pub struct Lexer<'input> {
     source: &'input str,
     position: usize,
-    queue: VecDeque<Spanned<Token, usize, LexError>>,
+    queue: VecDeque<Spanned<Token<'input>, usize, LexError>>,
     istack: Vec<usize>,
     nesting: usize,
     first: bool,
@@ -96,7 +96,7 @@ impl<'input> Lexer<'input> {
         }
 
         let (whitelen, whitecount) = self.whitecount(line);
-        println!("whitelen: {}, stack: {:?}", whitelen, self.istack);
+        // println!("whitelen: {}, stack: {:?}", whitelen, self.istack);
         let mut level = self.istack.len() - 1;
         if whitelen == self.istack[level] {
             if !self.first {
@@ -175,7 +175,6 @@ impl<'input> Lexer<'input> {
     }
     fn precalc(&mut self) {
         while let Some(c) = self.peek(0) {
-            println!("pos: {}, remain: {:?}", self.position, self.rest());
             if c == '\n' {
                 self.queue
                     .push_back(Ok((self.position, Token::Newline, self.position)));
@@ -198,8 +197,11 @@ impl<'input> Lexer<'input> {
             }
             match c {
                 '(' | ')' | '=' | ':' | ';' | '.' | ',' | '+' | '-' | '*' | '/' => {
-                    self.queue
-                        .push_back(Ok((self.position, Token::Symbol, self.position + 1)));
+                    self.queue.push_back(Ok((
+                        self.position,
+                        Token::Symbol(&self.source[self.position..self.position + 1]),
+                        self.position + 1,
+                    )));
                     self.position += 1;
                 }
                 '\'' | '"' => self.read_string(),
@@ -218,21 +220,21 @@ impl<'input> Lexer<'input> {
 }
 
 impl<'input> Iterator for Lexer<'input> {
-    type Item = Spanned<Token, usize, LexError>;
+    type Item = Spanned<Token<'input>, usize, LexError>;
     fn next(&mut self) -> Option<Self::Item> {
         let opt = self.queue.pop_front();
-        match &opt {
-            &Some(ref tok) => match tok {
-                &Ok((ref a, ref b, ref c)) => println!(
-                    "{:?}: {:?} ({})",
-                    b,
-                    &self.source[*a..*c],
-                    &self.source[*a..*c].len()
-                ),
-                _ => (),
-            },
-            _ => (),
-        }
+        // match &opt {
+        //     &Some(ref tok) => match tok {
+        //         &Ok((ref a, ref b, ref c)) => println!(
+        //             "{:?}: {:?} ({})",
+        //             b,
+        //             &self.source[*a..*c],
+        //             &self.source[*a..*c].len()
+        //         ),
+        //         _ => (),
+        //     },
+        //     _ => (),
+        // }
         opt
     }
 }
