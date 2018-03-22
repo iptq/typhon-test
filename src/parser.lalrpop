@@ -3,21 +3,18 @@ use lexer::{LexError, Number, Token};
 
 grammar<'input>;
 
-Expr: Expr = {
-    <number:"Number"> => match number {
-        Number::Integer(n) => Expr::IntLiteral(n),
-        _ => panic!("shiet"),
-    },
+Expr: Expr<'input> = {
+    <number:"Number"> => Expr::Number(number),
 };
 
-Stmt: Stmt = {
+Stmt: Stmt<'input> = {
     <e:Expr> => Stmt::Expr(e),
 };
 
-Stmts: Vec<Stmt> =
+Stmts: Vec<Stmt<'input>> =
     <v0:(<Stmt> "Newline")*> <e1:Stmt?> => v0.into_iter().chain(e1).collect();
 
-pub Line: Stmt =
+pub Line: Stmt<'input> =
     <s:Stmt> <x:"EOF"?> => s;
 
 pub Program: Program = {

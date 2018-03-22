@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use std::str::FromStr;
 
 const TAB_INDENT_WIDTH: usize = 8;
 const MAX_DEPTH: usize = 64;
@@ -157,7 +158,7 @@ impl<'input> Lexer<'input> {
             .push_back(Ok((self.position, Token::Ident, self.position + length)));
         self.position += length;
     }
-    fn read_number_generic(&self, base: usize) -> Option<(Number, usize)> {
+    fn read_number_generic(&self, base: u32) -> Option<(Number, usize)> {
         let mut dstr = String::new();
         let mut length = 0;
         let mut float = false;
@@ -174,6 +175,11 @@ impl<'input> Lexer<'input> {
                 '0'...'9' => if lchecked || uchecked {
                     return None;
                 } else {
+                    dstr += &c.to_string();
+                },
+                'a'...'f' | 'A'...'F' => if lchecked || uchecked {
+                    return None;
+                } else if base == 16 {
                     dstr += &c.to_string();
                 },
                 '.' => if lchecked || uchecked {
@@ -200,10 +206,28 @@ impl<'input> Lexer<'input> {
             "shiet {:?} (float={}, long={}, unsigned={})",
             dstr, float, long, unsigned
         );
+        // temporarily using unwrap here, we know what chars are in this string anyway
         Some((
-            Number::Integer(i32::from_str_radix(&dstr, base as u32).unwrap()),
+            if float {
+                if long {
+                    Number::LongFloat(FromStr::from_str(&dstr).unwrap())
+                } else {
+                    Number::Float(FromStr::from_str(&dstr).unwrap())
+                }
+            } else {
+                match (unsigned, long) {
+                    (true, true) => Number::ULongInteger(u64::from_str_radix(&dstr, base).unwrap()),
+                    (true, false) => Number::UInteger(u32::from_str_radix(&dstr, base).unwrap()),
+                    (false, true) => Number::LongInteger(i64::from_str_radix(&dstr, base).unwrap()),
+                    (false, false) => Number::Integer(i32::from_str_radix(&dstr, base).unwrap()),
+                }
+            },
             length,
         ))
+        // Some((
+        //     Number::Integer(i32::from_str_radix(&dstr, base as u32).unwrap()),
+        //     length,
+        // ))
     }
     fn read_number(&mut self) {
         let value = match self.peek(0) {
