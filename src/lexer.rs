@@ -6,6 +6,16 @@ const MAX_DEPTH: usize = 64;
 pub type Spanned<Token, Location, Error> = Result<(Location, Token, Location), Error>;
 
 #[derive(Debug)]
+pub enum Number {
+    Integer(i32),
+    UInteger(u32),
+    LongInteger(i64),
+    ULongInteger(u64),
+    Float(f32),
+    LongFloat(f64),
+}
+
+#[derive(Debug)]
 pub enum Token<'input> {
     // indentation
     Newline,
@@ -18,6 +28,9 @@ pub enum Token<'input> {
     RightParen,
     Colon,
 
+    // literals
+    Number(Number),
+
     String,
     Symbol(&'input str),
     Ident,
@@ -26,7 +39,8 @@ pub enum Token<'input> {
 }
 
 #[derive(Debug)]
-pub enum LexError {
+pub struct LexError {
+    message: String,
 }
 
 pub struct Lexer<'input> {
@@ -143,6 +157,76 @@ impl<'input> Lexer<'input> {
             .push_back(Ok((self.position, Token::Ident, self.position + length)));
         self.position += length;
     }
+    fn read_number_generic(&self, base: usize) -> Option<(Number, usize)> {
+        let mut dstr = String::new();
+        let mut length = 0;
+        let mut float = false;
+        let mut unsigned = false;
+        let mut long = false;
+        let mut dchecked = false;
+        let mut uchecked = false;
+        let mut lchecked = false;
+        if base != 10 {
+            length += 2;
+        }
+        while let Some(c) = self.peek(length) {
+            match c {
+                '0'...'9' => if lchecked || uchecked {
+                    return None;
+                } else {
+                    dstr += &c.to_string();
+                },
+                '.' => if lchecked || uchecked {
+                    return None;
+                } else {
+                    float = true;
+                    dstr += &c.to_string();
+                },
+                'u' => if lchecked || float {
+                    return None; // this is definitely an error
+                } else {
+                    unsigned = true;
+                    uchecked = true;
+                },
+                'L' => {
+                    long = true;
+                    lchecked = true;
+                }
+                _ => break,
+            }
+            length += 1;
+        }
+        println!(
+            "shiet {:?} (float={}, long={}, unsigned={})",
+            dstr, float, long, unsigned
+        );
+        Some((
+            Number::Integer(i32::from_str_radix(&dstr, base as u32).unwrap()),
+            length,
+        ))
+    }
+    fn read_number(&mut self) {
+        let value = match self.peek(0) {
+            Some('0') => match self.peek(1) {
+                // this could be bin / oct / hex
+                Some('b') | Some('B') => self.read_number_generic(2),
+                Some('o') | Some('O') => self.read_number_generic(8),
+                Some('x') | Some('X') => self.read_number_generic(16),
+                _ => self.read_number_generic(10),
+            },
+            Some(d) => self.read_number_generic(10),
+            None => panic!("invalid"),
+        };
+
+        match value {
+            Some((v, len)) => {
+                self.queue
+                    .push_back(Ok((self.position, Token::Number(v), self.position + len)));
+                self.position += len;
+            }
+            None => (),
+        }
+    }
     fn read_string(&mut self) {
         // TODO: check triple string
         let quote_type: char = self.peek(0).unwrap();
@@ -206,11 +290,7 @@ impl<'input> Lexer<'input> {
                 }
                 '\'' | '"' => self.read_string(),
                 'a'...'z' | 'A'...'Z' => self.read_ident(),
-                '0'...'9' => {
-                    self.queue
-                        .push_back(Ok((self.position, Token::Digit, self.position + 1)));
-                    self.position += 1;
-                }
+                '0'...'9' => self.read_number(),
                 _ => self.position += 1,
             };
         }

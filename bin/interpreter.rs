@@ -8,6 +8,7 @@ use typhon::parser::parse_Line;
 
 fn main() {
     let mut reader;
+    println!("Typhon v0.1");
 
     match Reader::new(":b") {
         Ok(anything) => reader = anything,
@@ -27,6 +28,6 @@ fn main() {
         }
         let mut lexer = Lexer::new(&trimmed);
         let stmt = parse_Line(lexer);
-        println!("{:?}", stmt);
+        println!("stmt: {:?}", stmt);
     }
 }

@@ -7,6 +7,7 @@ use std::io::prelude::*;
 use clap::{App, Arg};
 
 use typhon::lexer::Lexer;
+use typhon::parser::parse_Program;
 
 fn main() {
     let matches = App::new("Typhon")
@@ -32,6 +33,6 @@ fn main() {
 
     // parsing
     let lexer = Lexer::new(&contents);
-    println!("total: {}", lexer.count());
-    // parse_Program(lexer);
+    let program = parse_Program(lexer);
+    println!("program: {:?}", program);
 }
