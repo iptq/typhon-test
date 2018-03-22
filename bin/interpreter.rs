@@ -18,6 +18,7 @@ fn main() {
 
     while let Ok(ReadResult::Input(line)) = reader.read_line() {
         let trimmed = line.trim();
+        // TODO: check if we have to read another line
         if !trimmed.is_empty() {
             reader.add_history(line.clone());
         }

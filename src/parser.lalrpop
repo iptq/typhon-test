@@ -7,18 +7,32 @@ Expr: Expr<'input> = {
     <number:"Number"> => Expr::Number(number),
 };
 
-Stmt: Stmt<'input> = {
+SmallStmt: Stmt<'input> = {
     <e:Expr> => Stmt::Expr(e),
+    "return" <e:Expr> => Stmt::Return(e),
 };
 
-Stmts: Vec<Stmt<'input>> =
-    <v0:(<Stmt> "Newline")*> <e1:Stmt?> => v0.into_iter().chain(e1).collect();
+SimpleStmt: Stmt<'input> = <s0:SmallStmt> "Newline"? => s0;
+
+CompoundStmt: Stmt<'input> = {
+    "fn" <name:"Ident"> "(" ")" ":" <s:Suite> => Stmt::FuncDef(name, s),
+};
+
+Stmt: Stmt<'input> = {
+    <s:SimpleStmt> => s,
+    <s:CompoundStmt> => s,
+};
+
+Suite: Vec<Stmt<'input>> = {
+    <s:SimpleStmt> => vec![s],
+    "Newline" "Indent" <s:Stmt+> "Dedent" => s,
+};
 
 pub Line: Stmt<'input> =
     <s:Stmt> <x:"EOF"?> => s;
 
 pub Program: Program = {
-    <v:Stmts> <x:"EOF"?> => Program {},
+    <v:Stmt*> <x:"EOF"?> => Program {},
 };
 
 extern {
@@ -26,11 +40,22 @@ extern {
     type Error = LexError;
 
     enum Token<'input> {
+        // symbols
         "(" => Token::LeftParen,
         ")" => Token::RightParen,
+        ":" => Token::Colon,
+        ";" => Token::Semicolon,
+
+        // keywords
+        "fn" => Token::KeywordFn,
+        "return" => Token::KeywordReturn,
+
+        "Ident" => Token::Ident(<&'input str>),
+
         "EOF" => Token::EOF,
         "Newline" => Token::Newline,
-        "Colon" => Token::Symbol(<&'input str>),
+        "Indent" => Token::Indent,
+        "Dedent" => Token::Dedent,
 
         "Number" => Token::Number(<Number>),
     }

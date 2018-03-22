@@ -28,13 +28,18 @@ pub enum Token<'input> {
     LeftParen,
     RightParen,
     Colon,
+    Semicolon,
 
     // literals
     Number(Number),
 
+    // keywords
+    KeywordFn,
+    KeywordReturn,
+
     String,
     Symbol(&'input str),
-    Ident,
+    Ident(&'input str),
     Digit,
     Char,
 }
@@ -154,8 +159,15 @@ impl<'input> Lexer<'input> {
             0,
         );
         let length = name.len();
-        self.queue
-            .push_back(Ok((self.position, Token::Ident, self.position + length)));
+        self.queue.push_back(Ok((
+            self.position,
+            match name {
+                "fn" => Token::KeywordFn,
+                "return" => Token::KeywordReturn,
+                _ => Token::Ident(name),
+            },
+            self.position + length,
+        )));
         self.position += length;
     }
     fn read_number_generic(&self, base: u32) -> Option<(Number, usize)> {
@@ -164,7 +176,6 @@ impl<'input> Lexer<'input> {
         let mut float = false;
         let mut unsigned = false;
         let mut long = false;
-        let mut dchecked = false;
         let mut uchecked = false;
         let mut lchecked = false;
         if base != 10 {
@@ -307,7 +318,13 @@ impl<'input> Lexer<'input> {
                 '(' | ')' | '=' | ':' | ';' | '.' | ',' | '+' | '-' | '*' | '/' => {
                     self.queue.push_back(Ok((
                         self.position,
-                        Token::Symbol(&self.source[self.position..self.position + 1]),
+                        match c {
+                            '(' => Token::LeftParen,
+                            ')' => Token::RightParen,
+                            ':' => Token::Colon,
+                            ';' => Token::Semicolon,
+                            _ => Token::Symbol(&self.source[self.position..self.position + 1]),
+                        },
                         self.position + 1,
                     )));
                     self.position += 1;

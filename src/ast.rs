@@ -11,7 +11,8 @@ pub enum Expr<'input> {
 #[derive(Debug)]
 pub enum Stmt<'input> {
     Expr(Expr<'input>),
-    FuncDef,
+    FuncDef(&'input str, Vec<Stmt<'input>>),
+    Return(Expr<'input>),
 }
 
 #[derive(Debug)]
