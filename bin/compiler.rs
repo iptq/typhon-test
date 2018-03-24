@@ -1,4 +1,5 @@
 extern crate clap;
+extern crate llvm_sys;
 extern crate typhon;
 
 use std::fs::File;
@@ -6,6 +7,8 @@ use std::io::prelude::*;
 
 use clap::{App, Arg};
 
+use typhon::hir::IntoHIR;
+use typhon::ast::Program;
 use typhon::lexer::Lexer;
 use typhon::parser::parse_Program;
 
@@ -33,6 +36,14 @@ fn main() {
 
     // parsing
     let lexer = Lexer::new(&contents);
-    let program = parse_Program(lexer);
-    println!("program: {:?}", program);
+    let mut ast;
+    match parse_Program(lexer) {
+        Ok(x) => ast = x,
+        Err(e) => panic!("error: {:?}", e),
+    }
+    println!("ast: {:?}", ast);
+
+    // hir
+    let hir = ast.convert();
+    println!("hir: {:?}", hir);
 }

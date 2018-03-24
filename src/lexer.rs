@@ -149,6 +149,17 @@ impl<'input> Lexer<'input> {
 
         0
     }
+    fn read_comment(&mut self) {
+        let mut length = 0;
+        self.position += 1;
+        while let Some(c) = self.peek(length) {
+            if c == '\n' {
+                break;
+            }
+            length += 1;
+        }
+        self.position += length;
+    }
     fn read_ident(&mut self) {
         // already guaranteed that ch is not going to be a digit
         let name = self.peekwhile(
@@ -213,10 +224,11 @@ impl<'input> Lexer<'input> {
             }
             length += 1;
         }
-        println!(
-            "shiet {:?} (float={}, long={}, unsigned={})",
-            dstr, float, long, unsigned
-        );
+        // println!(
+        //     "shiet {:?} (float={}, long={}, unsigned={})",
+        //     dstr, float, long, unsigned
+        // );
+        
         // temporarily using unwrap here, we know what chars are in this string anyway
         Some((
             if float {
@@ -249,7 +261,7 @@ impl<'input> Lexer<'input> {
                 Some('x') | Some('X') => self.read_number_generic(16),
                 _ => self.read_number_generic(10),
             },
-            Some(d) => self.read_number_generic(10),
+            Some(_) => self.read_number_generic(10),
             None => panic!("invalid"),
         };
 
@@ -315,6 +327,7 @@ impl<'input> Lexer<'input> {
                 // match double token
             }
             match c {
+                '#' => self.read_comment(),
                 '(' | ')' | '=' | ':' | ';' | '.' | ',' | '+' | '-' | '*' | '/' => {
                     self.queue.push_back(Ok((
                         self.position,

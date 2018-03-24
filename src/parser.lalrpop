@@ -1,10 +1,14 @@
-use ast::{Expr, Program, Stmt};
+use ast::{Expr, Program, Stmt, Value};
 use lexer::{LexError, Number, Token};
 
 grammar<'input>;
 
-Expr: Expr<'input> = {
-    <number:"Number"> => Expr::Number(number),
+Literal: Value = {
+    <number:"Number"> => Value::Number(number),
+};
+
+Expr: Expr = {
+    <literal:Literal> => Expr::Value(literal),
 };
 
 SmallStmt: Stmt<'input> = {
@@ -12,15 +16,15 @@ SmallStmt: Stmt<'input> = {
     "return" <e:Expr> => Stmt::Return(e),
 };
 
-SimpleStmt: Stmt<'input> = <s0:SmallStmt> "Newline"? => s0;
+SimpleStmt: Stmt<'input> = <s0:SmallStmt> => s0;
 
 CompoundStmt: Stmt<'input> = {
-    "fn" <name:"Ident"> "(" ")" ":" <s:Suite> => Stmt::FuncDef(name, s),
+    "fn" <name:"Ident"> "(" ")" ":" <body:Suite> => Stmt::FuncDef { name, body },
 };
 
 Stmt: Stmt<'input> = {
-    <s:SimpleStmt> => s,
-    <s:CompoundStmt> => s,
+    <s:SimpleStmt> "Newline"* => s,
+    <s:CompoundStmt> "Newline"* => s,
 };
 
 Suite: Vec<Stmt<'input>> = {
@@ -31,8 +35,8 @@ Suite: Vec<Stmt<'input>> = {
 pub Line: Stmt<'input> =
     <s:Stmt> <x:"EOF"?> => s;
 
-pub Program: Program = {
-    <v:Stmt*> <x:"EOF"?> => Program {},
+pub Program: Program<'input> = {
+    <stmts:Stmt*> <x:"EOF"?> => Program { stmts },
 };
 
 extern {
