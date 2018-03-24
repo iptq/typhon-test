@@ -1,29 +1,29 @@
-use lexer::Number;
-use types::Type;
+use types::{Literal, Type};
 
-pub trait IntoHIR<T> {
-    fn convert(&self) -> T;
+#[derive(Debug)]
+pub enum ExprKind<'input> {
+    Literal(&'input Literal),
 }
 
 #[derive(Debug)]
-pub enum ExprKind {
-    IntLiteral(i32),
-    UIntLiteral(u32),
-    Number(Number),
+pub struct Expr<'input> {
+    pub ty: Type,
+    pub kind: ExprKind<'input>,
 }
 
 #[derive(Debug)]
-pub struct Expr {
-    ty: Type,
-    value: ExprKind,
-}
-
-#[derive(Debug)]
-pub enum Stmt {
+pub enum StmtKind<'input> {
+    Expr(Expr<'input>),
     Function,
 }
 
 #[derive(Debug)]
-pub struct Program {
-    pub functions: Vec<Stmt>,
+pub struct Stmt<'input> {
+    pub kind: StmtKind<'input>,
+    pub ty: Type,
+}
+
+#[derive(Debug)]
+pub struct Program<'input> {
+    pub functions: Vec<Stmt<'input>>,
 }

@@ -7,8 +7,6 @@ use std::io::prelude::*;
 
 use clap::{App, Arg};
 
-use typhon::hir::IntoHIR;
-use typhon::ast::Program;
 use typhon::lexer::Lexer;
 use typhon::parser::parse_Program;
 
@@ -36,7 +34,7 @@ fn main() {
 
     // parsing
     let lexer = Lexer::new(&contents);
-    let mut ast;
+    let ast;
     match parse_Program(lexer) {
         Ok(x) => ast = x,
         Err(e) => panic!("error: {:?}", e),

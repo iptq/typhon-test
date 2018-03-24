@@ -1,14 +1,15 @@
-use ast::{Expr, Program, Stmt, Value};
 use lexer::{LexError, Number, Token};
+use ast::{Expr, Program, Stmt};
+use types::Literal;
 
 grammar<'input>;
 
-Literal: Value = {
-    <number:"Number"> => Value::Number(number),
+Literal: Literal = {
+    <number:"Number"> => Literal::from(number),
 };
 
 Expr: Expr = {
-    <literal:Literal> => Expr::Value(literal),
+    <literal:Literal> => Expr::Literal(literal),
 };
 
 SmallStmt: Stmt<'input> = {
